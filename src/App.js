@@ -1,23 +1,27 @@
 import logo from './logo.svg';
 import './App.css';
+import {useState, useRef} from 'react'
 
 function App() {
+  // const [stream,setStream] = useState();
+  // const audio = useRef();
+  async function getMedia(constraints){
+    let stream = null;
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: true
+    });
+
+    this.audio.srcObject = stream;
+    } catch (err) {
+
+    }
+  }
+  getMedia();
   return (
     <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
+      <audio ref={audio => {this.audio = audio}} controls volume="true" autoPlay/>
     </div>
   );
 }
