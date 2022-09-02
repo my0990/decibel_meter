@@ -1,27 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
-import {useState, useRef} from 'react'
+import AudioTest from './components/audioTest.js';
 
-function App() {
-  // const [stream,setStream] = useState();
-  // const audio = useRef();
-  async function getMedia(constraints){
-    let stream = null;
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true
-    });
+function App(){
 
-    this.audio.srcObject = stream;
-    } catch (err) {
-
-    }
-  }
-  getMedia();
   return (
-    <div className="App">
-      <audio ref={audio => {this.audio = audio}} controls volume="true" autoPlay/>
+    <div>
+      <p>test</p>
+      <AudioTest />
     </div>
   );
 }
