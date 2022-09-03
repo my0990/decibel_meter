@@ -1,13 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
 import AudioTest from './components/audioTest.js';
+import AudioContainer from './components/AudioContainer.js';
 
 function App(){
 
   return (
     <div>
-      <p>test</p>
-      <AudioTest />
+      <AudioContainer />
     </div>
   );
 }

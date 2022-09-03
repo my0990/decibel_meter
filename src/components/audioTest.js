@@ -1,13 +1,16 @@
 
-import { useRef,useState, useEffect } from "react";
+import { useRef,useState, useEffect, useCallback } from "react";
 
 const AudioTest = () => {
+    const [word,setWord] = useState('조용하다');
+
     const analyserCanvas = useRef(null);
     const [mediaStream, setMediaStream] = useState(null);
     const options = {
         video: false,
         audio: true,
       };
+
     useEffect(()=>{
         async function enableStream() {
             try{
@@ -18,29 +21,46 @@ const AudioTest = () => {
                 const audioSrc = audioCtx.createMediaStreamSource(stream);
                 audioSrc.connect(analyser);
                 const data = new Uint8Array(analyser.frequencyBinCount);
-                console.log('data:', data)
+
                 
                 const ctx = analyserCanvas.current.getContext('2d');
-          
+                let count = 1;
+                analyserCanvas.height = window.innerHeight;
+                analyserCanvas.width = window.innerWidth;
                 const draw = dataParm => {
                   dataParm = [...dataParm];
+                  
+                  if(count==1){
+                    console.log(dataParm);
+                    count++;
+                  }
                   ctx.fillStyle = 'white';
+                  ctx.fillRect(0,0,analyserCanvas.current.width,analyserCanvas.current.height)
                   ctx.lineWidth = 2;
-                  ctx.strokeStyle = '#d5d4d5';
+                  ctx.strokeStyle = 'blue';
                   const space = analyserCanvas.current.width / dataParm.length;
+                  // console.log((Math.max(...dataParm)));
+                  // useCallback(() => setNoise(Math.max(...dataParm)),[]);
+                  // setNoise(Math.max(...dataParm));
+                  if(Math.max(...dataParm) > 200){
+                    setWord('시끄럽다');
+                  }
                   dataParm.forEach((value, i) => {
+                    
                     ctx.beginPath();
                     ctx.moveTo(space * i, analyserCanvas.current.height);
-                    ctx.lineTo(space * i, analyserCanvas.current.height - value);
+                    ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
                     ctx.stroke();
                   }
                   );
                 };
+
                 const loopingFunction = () => {
                   requestAnimationFrame(loopingFunction);
                   analyser.getByteFrequencyData(data);
                   draw(data);
                 };
+
                 requestAnimationFrame(loopingFunction);
               } catch(err){
                 throw(500,err);
@@ -59,8 +79,12 @@ const AudioTest = () => {
     })
 
     return (
-        <canvas ref={analyserCanvas} className=""></canvas>
-
+      <div>
+        <canvas ref={analyserCanvas}></canvas>
+        <h2 style={{textAlign:"center"}}>
+          {word}
+        </h2>
+      </div>
     )
 }
 
