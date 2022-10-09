@@ -1,4 +1,4 @@
-import AudioTest from "./audioTest";
+import AudioTest from "../audioTest";
 import styled from "styled-components";
 import {useState} from "react";
 

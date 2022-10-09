@@ -3,7 +3,6 @@ import { useRef,useState, useEffect, useCallback } from "react";
 
 const AudioTest = () => {
     const [word,setWord] = useState('조용하다');
-
     const analyserCanvas = useRef(null);
     const [mediaStream, setMediaStream] = useState(null);
     const options = {
@@ -75,7 +74,6 @@ const AudioTest = () => {
                 });
             }
         }
-
     })
 
     return (
