@@ -1,27 +1,34 @@
-import logo from './logo.svg';
 import './App.css';
-import {useState, useRef} from 'react'
+import {useState, useRef} from 'react';
+import {useUserMedia} from './lib/useUserMedia';
+
+
+
+const AUDIO_OPTIONS = {
+  audio: true,
+  video: false,
+};
+
 
 function App() {
-  // const [stream,setStream] = useState();
-  // const audio = useRef();
-  async function getMedia(constraints){
-    let stream = null;
-    try {
-      stream = await navigator.mediaDevices.getUserMedia({
-        audio: true,
-        video: true
-    });
+  const audioRef = useRef();
+  const mediaStream = useUserMedia(AUDIO_OPTIONS);
 
-    this.audio.srcObject = stream;
-    } catch (err) {
-
-    }
+  if (mediaStream && audioRef.current && !audioRef.current.srcObject) {
+    audioRef.current.srcObgject = mediaStream;
   }
-  getMedia();
+
+  function handleCanPlay() {
+    audioRef.current.play();
+  }
   return (
     <div className="App">
-      <audio ref={audio => {this.audio = audio}} controls volume="true" autoPlay/>
+      {/* <audio ref={audio => {this.audio = audio}} controls volume="true" autoPlay/> */}
+      <div>
+        <div>ddd</div>
+        <audio ref={audioRef} onCanPlay={handleCanPlay}/>
+      </div>
+
     </div>
   );
 }
