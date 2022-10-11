@@ -1,35 +1,39 @@
+import React from 'react'
+import Split from 'react-split';
+import styled from 'styled-components';
+import BoardTemplate from './components/board/BoardTemplate';
+import TimerTemplate from './components/timer/TimerTemplate';
+import DecibelTemplate from './components/decibel/DecibelTemplate';
 import './App.css';
-import {useState, useRef} from 'react';
-import {useUserMedia} from './lib/useUserMedia';
+
+const Container = styled.div`
+  /* min-width: 1024px; */
+  min-height: 768px;
+  height: 100%;
+`
 
 
+function App(){
 
-const AUDIO_OPTIONS = {
-  audio: true,
-  video: false,
-};
-
-
-function App() {
-  const audioRef = useRef();
-  const mediaStream = useUserMedia(AUDIO_OPTIONS);
-
-  if (mediaStream && audioRef.current && !audioRef.current.srcObject) {
-    audioRef.current.srcObgject = mediaStream;
-  }
-
-  function handleCanPlay() {
-    audioRef.current.play();
-  }
   return (
-    <div className="App">
-      {/* <audio ref={audio => {this.audio = audio}} controls volume="true" autoPlay/> */}
-      <div>
-        <div>ddd</div>
-        <audio ref={audioRef} onCanPlay={handleCanPlay}/>
-      </div>
-
-    </div>
+    <Container>
+      <Split
+        className='flex'
+        sizes={[100,0]}
+        minSize={0}
+      >
+            <Split
+              direction='vertical'
+              style={{height: '100vh'}}
+              sizes={[70,30]}
+              minSize={0}
+            >
+              <TimerTemplate />
+              <DecibelTemplate />
+            </Split>
+            <BoardTemplate />
+      </Split>
+    </Container>
   );
 }
 
