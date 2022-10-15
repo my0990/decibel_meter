@@ -8,7 +8,7 @@ import './App.css';
 
 const Container = styled.div`
   /* min-width: 1024px; */
-  min-height: 768px;
+
   height: 100%;
 `
 

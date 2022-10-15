@@ -1,6 +1,7 @@
-import AudioTest from "../audioTest";
+import AudioTest from "./audioTest";
 import styled from "styled-components";
 import {useState} from "react";
+import React from "react";
 
 const Container = styled.div`
     display: flex;

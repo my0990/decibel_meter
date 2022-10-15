@@ -1,5 +1,6 @@
 import React from "react";
 import styled from "styled-components";
+import AudioContainer from "./AudioContainer";
 
 const DecibelTemplateContainer = styled.div`
     background-color: yellow;
@@ -10,6 +11,7 @@ const DecibelTemplate = () => {
     return(
         <DecibelTemplateContainer>
             <h1>데시벨</h1>
+            {/* <AudioContainer /> */}
         </DecibelTemplateContainer>
     )
 }
