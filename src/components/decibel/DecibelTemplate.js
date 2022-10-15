@@ -3,7 +3,7 @@ import styled from "styled-components";
 import AudioContainer from "./AudioContainer";
 
 const DecibelTemplateContainer = styled.div`
-    background-color: yellow;
+
     h1 {margin: 0}
 `
 

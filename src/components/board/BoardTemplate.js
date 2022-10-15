@@ -4,7 +4,7 @@ import styled from "styled-components";
 
 
 const BoardTemplateContainer = styled.div`
-    background-color: skyblue;
+
 `
 
 

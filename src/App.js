@@ -26,9 +26,9 @@ function App(){
               direction='vertical'
               style={{height: '100vh'}}
               sizes={[70,30]}
+              minSize={0}
             >
               <TimerTemplate />
-              
               <DecibelTemplate />
             </Split>
             <BoardTemplate />
