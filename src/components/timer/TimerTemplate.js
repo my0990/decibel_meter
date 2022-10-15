@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import styled from "styled-components";
 import { useTimer } from 'react-timer-hook';
 import { useState, useMemo } from 'react';
@@ -31,18 +31,14 @@ function TimerTemplate() {
     } = useTimer({expiryTimestamp});
     const [plusMinute,setPlusMinute] = useState(0);
     let time = useMemo(()=> new Date(),[]);
-    
-    
-    
     const setMinute = (number) => {
-        if(!isRunning){
-            time = new Date();
-            setPlusMinute((num) => num + parseInt(number));
-            time.setSeconds(time.getSeconds() + plusMinute);
+        let tmp = new Date();
+        if(isRunning){
+            time.setSeconds(time.getSeconds() + number);
         }
-        time.setSeconds(time.getSeconds() + number);
-        restart(time);
-        pause();
+
+        
+        restart(time)
 
     }
 
@@ -50,17 +46,26 @@ function TimerTemplate() {
         <TimerTemplateContainer>
             <div style={{fontSize: '100px'}} className="timeDisplay">
                 <span>{String(hours).padStart(2,'0')}</span>:<span>{String(minutes).padStart(2,'0')}</span>:<span>{String(seconds).padStart(2,'0')}</span>
+                <div>
+                {plusMinute}
+                </div>
             </div>
             <div>
                 <button onClick={() => setMinute(60)}>1분</button>
                 <button onClick={() => setMinute(180)}>3분</button>
                 <button onClick={() => setMinute(300)}>5분</button>
                 <button onClick={() => setMinute(600)}>10분</button>
-         
+                <button onClick={()=>{console.log(time)}}>test</button>
             </div>
             <div>
-                <button onClick={start}>Start</button>
+                <button onClick={resume}>start</button> 
                 <button onClick={pause}>Pause</button> 
+                <button onClick={() => {
+                    // Restarts to 5 minutes timer
+                    const time = new Date();
+                    time.setSeconds(time.getSeconds());
+                    restart(time)
+                }}>Restart</button>
             </div>
             {/* <p>{isRunning ? 'Running' : 'Not running'}</p> */}
             {/* <button onClick={start}>Start</button>
