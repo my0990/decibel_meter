@@ -15,6 +15,8 @@ const TimerTemplateContainer = styled.div`
 function TimerTemplate() {
 
     const expiryTimestamp = useMemo(()=> new Date(),[]);
+    const [pausedTime,setPausedTime] = useState(null);
+    
     expiryTimestamp.setSeconds(expiryTimestamp.getSeconds());
     const {
       seconds,
@@ -26,31 +28,56 @@ function TimerTemplate() {
       pause,
       resume,
       restart,
-    } = useTimer({expiryTimestamp});
+    } = useTimer({expiryTimestamp, onExpire: () => {
+        if(isStart){
+            setIsStart(false);
+        }
+    }});
+
     const [isStart,setIsStart] = useState(false);
+    const [isPaused,setIsPaused] = useState(false);
 
     const setMinute = (number) => {
         var current = new Date();
-        if(!isRunning){
+        if(!isStart){
             expiryTimestamp.setTime(current.getTime());
         }
+        setIsStart(true);
+        if(isPaused){
+            
+            let resumeTime= new Date().getTime();
+            expiryTimestamp.setTime(expiryTimestamp.getTime() + resumeTime - pausedTime);///
+
+        } 
+        // else if(!isRunning){
+        //     expiryTimestamp.setTime(current.getTime());
+        // }
         expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + number);
-        restart(expiryTimestamp)
+        
+        restart(expiryTimestamp);
+        if(!isRunning){
+            pause();
+        }
     }
     const onReset = () => {
-        var current = new Date();
+        let current = new Date();
         expiryTimestamp.setTime(current.getTime());
         setIsStart(false);
         restart(expiryTimestamp);
     }
     const onStart = () => {
         setIsStart(true);
+        setIsPaused(true);
         resume();
     }
     const onPause = () => {
+        setIsPaused(true);
         setIsStart(false);
+        setPausedTime(new Date().getTime());
+        console.log('test', pausedTime);
         pause();
     }
+
 
     return(
         <TimerTemplateContainer>
@@ -58,27 +85,25 @@ function TimerTemplate() {
                 <span>{String(hours).padStart(2,'0')}</span>:<span>{String(minutes).padStart(2,'0')}</span>:<span>{String(seconds).padStart(2,'0')}</span>
             </div>
             <div>
-                <button onClick={() => setMinute(1)}>1분</button>
-                <button onClick={() => setMinute(180)}>3분</button>
-                <button onClick={() => setMinute(300)}>5분</button>
-                <button onClick={() => setMinute(600)}>10분</button>
-                {/* <button onClick={() => console.log(time)}>test</button> */}
+                <div>
+                    <button onClick={() => setMinute(1)}>1초</button>
+                    <button onClick={() => setMinute(3)}>3초</button>
+                    <button onClick={() => setMinute(5)}>5초</button>
+                    <button onClick={() => setMinute(10)}>10초</button>
+                </div> 
+                <div>
+                    <button onClick={() => setMinute(60)}>1분</button>
+                    <button onClick={() => setMinute(180)}>3분</button>
+                    <button onClick={() => setMinute(300)}>5분</button>
+                    <button onClick={() => setMinute(600)}>10분</button>
+                </div>
+                {/* <button onClick={() => console.log(expiryTimestamp)}>test</button> */}
             </div>
             <div>
                 <button onClick={onStart}>start</button> 
                 <button onClick={onPause}>Pause</button> 
                 <button onClick={onReset}>reset</button>
             </div>
-            {/* <p>{isRunning ? 'Running' : 'Not running'}</p> */}
-            {/* <button onClick={start}>Start</button>
-            <button onClick={pause}>Pause</button>
-            <button onClick={resume}>Resume</button>
-            <button onClick={() => {
-            // Restarts to 5 minutes timer
-            const time = new Date();
-            time.setSeconds(time.getSeconds() + 300);
-            restart(time)
-            }}>Restart</button> */}
         </TimerTemplateContainer>
     )
 }
