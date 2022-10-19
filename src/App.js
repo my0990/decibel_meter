@@ -20,15 +20,15 @@ function App(){
       <Split
         className='flex'
         sizes={[100,0]}
-        minSize={0}
+        minSize={300}
       >
             <Split
               direction='vertical'
               style={{height: '100vh'}}
               sizes={[70,30]}
-              minSize={0}
+              minSize={10}
             >
-              <TimerTemplate />
+              <TimerTemplate/>
               <DecibelTemplate />
             </Split>
             <BoardTemplate />
