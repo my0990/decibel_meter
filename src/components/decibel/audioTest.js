@@ -41,17 +41,23 @@ const AudioTest = () => {
                   // console.log((Math.max(...dataParm)));
                   // useCallback(() => setNoise(Math.max(...dataParm)),[]);
                   // setNoise(Math.max(...dataParm));
-                  if(Math.max(...dataParm) > 200){
+                  let volumn = Math.max(...dataParm);
+                  if( 100 < volumn && volumn < 200){
+                    setWord('조금 시끄럽다');
+                  } else if(volumn >= 200){
                     setWord('시끄럽다');
+                  } else {
+                    setWord('조용하다');
                   }
-                  dataParm.forEach((value, i) => {
+                  
+                  // dataParm.forEach((value, i) => {
                     
-                    ctx.beginPath();
-                    ctx.moveTo(space * i, analyserCanvas.current.height);
-                    ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
-                    ctx.stroke();
-                  }
-                  );
+                  //   ctx.beginPath();
+                  //   ctx.moveTo(space * i, analyserCanvas.current.height);
+                  //   ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
+                  //   ctx.stroke();
+                  // }
+                  // );
                 };
 
                 const loopingFunction = () => {

@@ -10,13 +10,14 @@ const TimerTemplateContainer = styled.div`
     justify-content: center;
     align-items:center;
     overflow: hidden;
+    
 `
 
 function TimerTemplate() {
 
     const expiryTimestamp = useMemo(()=> new Date(),[]);
     const [pausedTime,setPausedTime] = useState(null);
-    
+    const [firstTime,setFirstTime] = useState(null);
     expiryTimestamp.setSeconds(expiryTimestamp.getSeconds());
     const {
       seconds,
@@ -38,27 +39,20 @@ function TimerTemplate() {
     const [isPaused,setIsPaused] = useState(false);
     const [firstClick,setFirstClick] = useState(null);
     const setMinute = (number) => {
-        var current = new Date();
+        let current = new Date();
         if(!isStart){
-            setFirstClick(new Date());
-            expiryTimestamp.setTime(current.getTime());
-        } else {
-            expiryTimestamp.setTime(expiryTimestamp.getTime());
-        }
-        setIsStart(true);
-        if(isPaused){
+            //아예 처음 클릭했을때와 그 다음 클릭했을때
+            if(!firstTime){
+                expiryTimestamp.setTime(current.getTime());
+            } else {
+                expiryTimestamp.setTime(expiryTimestamp.getTime() + current.getTime() - firstTime.getTime());
+            }
             
-            let resumeTime= new Date().getTime();
-            expiryTimestamp.setTime(expiryTimestamp.getTime() + resumeTime - pausedTime);///
-
-        } 
-        // else if(!isRunning){
-        //     expiryTimestamp.setTime(current.getTime());
-        // }
+        }
+        setFirstTime(current);
         expiryTimestamp.setSeconds(expiryTimestamp.getSeconds() + number);
-        
         restart(expiryTimestamp);
-        if(!isRunning){
+        if(!isStart){
             pause();
         }
     }
@@ -66,18 +60,32 @@ function TimerTemplate() {
         let current = new Date();
         expiryTimestamp.setTime(current.getTime());
         setIsStart(false);
+        setFirstTime(null);
         restart(expiryTimestamp);
     }
     const onStart = () => {
+        if(!firstTime || isStart){
+            return null;
+        }
+        let current = new Date();
+        expiryTimestamp.setTime(expiryTimestamp.getTime() + current.getTime() - firstTime.getTime());
         setIsStart(true);
-        setIsPaused(true);
+        setFirstTime(current);
+        setIsPaused(false);
         resume();
     }
     const onPause = () => {
+        if(!firstTime || isPaused){
+            console.log(firstTime, isPaused)
+            return null;
+        }
+        
+        let current = new Date();
+        expiryTimestamp.setTime(expiryTimestamp.getTime() - current.getTime() + firstTime.getTime());
+        
+        
         setIsPaused(true);
         setIsStart(false);
-        setPausedTime(new Date().getTime());
-        console.log('test', pausedTime);
         pause();
     }
 
@@ -88,12 +96,6 @@ function TimerTemplate() {
                 <span>{String(hours).padStart(2,'0')}</span>:<span>{String(minutes).padStart(2,'0')}</span>:<span>{String(seconds).padStart(2,'0')}</span>
             </div>
             <div>
-                <div>
-                    <button onClick={() => setMinute(1)}>1초</button>
-                    <button onClick={() => setMinute(3)}>3초</button>
-                    <button onClick={() => setMinute(5)}>5초</button>
-                    <button onClick={() => setMinute(10)}>10초</button>
-                </div> 
                 <div>
                     <button onClick={() => setMinute(60)}>1분</button>
                     <button onClick={() => setMinute(180)}>3분</button>
