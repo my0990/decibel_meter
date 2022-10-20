@@ -36,11 +36,14 @@ function TimerTemplate() {
 
     const [isStart,setIsStart] = useState(false);
     const [isPaused,setIsPaused] = useState(false);
-
+    const [firstClick,setFirstClick] = useState(null);
     const setMinute = (number) => {
         var current = new Date();
         if(!isStart){
+            setFirstClick(new Date());
             expiryTimestamp.setTime(current.getTime());
+        } else {
+            expiryTimestamp.setTime(expiryTimestamp.getTime());
         }
         setIsStart(true);
         if(isPaused){
