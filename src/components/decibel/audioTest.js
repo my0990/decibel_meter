@@ -2,14 +2,14 @@ import React from "react";
 import { useRef,useState, useEffect, useCallback } from "react";
 
 const AudioTest = () => {
-    const [word,setWord] = useState('조용하다');
+    const [decibel,setDecibel] = useState(0);
     const analyserCanvas = useRef(null);
     const [mediaStream, setMediaStream] = useState(null);
     const options = {
         video: false,
         audio: true,
       };
-
+    
     useEffect(()=>{
         async function enableStream() {
             try{
@@ -23,16 +23,14 @@ const AudioTest = () => {
 
                 
                 const ctx = analyserCanvas.current.getContext('2d');
-                let count = 1;
+                
                 analyserCanvas.height = window.innerHeight;
                 analyserCanvas.width = window.innerWidth;
                 const draw = dataParm => {
-                  dataParm = [...dataParm];
+                  // console.log(dataParm);
+                  // dataParm = [...dataParm];
+                  // console.log(dataParm);
                   
-                  if(count==1){
-                    console.log(dataParm);
-                    count++;
-                  }
                   ctx.fillStyle = 'white';
                   ctx.fillRect(0,0,analyserCanvas.current.width,analyserCanvas.current.height)
                   ctx.lineWidth = 2;
@@ -42,31 +40,42 @@ const AudioTest = () => {
                   // useCallback(() => setNoise(Math.max(...dataParm)),[]);
                   // setNoise(Math.max(...dataParm));
                   let volumn = Math.max(...dataParm);
-                  if( 100 < volumn && volumn < 200){
-                    setWord('조금 시끄럽다');
-                  } else if(volumn >= 200){
-                    setWord('시끄럽다');
-                  } else {
-                    setWord('조용하다');
-                  }
                   
-                  // dataParm.forEach((value, i) => {
-                    
-                  //   ctx.beginPath();
-                  //   ctx.moveTo(space * i, analyserCanvas.current.height);
-                  //   ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
-                  //   ctx.stroke();
+                  
+                  // console.log(volumn);
+                  dataParm.forEach((value, i) => {
+                    ctx.beginPath();
+                    ctx.moveTo(space * i, analyserCanvas.current.height);
+                    ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
+                    ctx.stroke();
+                  }
+                  );
+                  // if(volumn> 100){
+                  //   audioArr++;
+                  // } else if(audioArr>0){
+                  //   audioArr--;
                   // }
-                  // );
+                  // console.log(audioArr);
+                  // ctx.beginPath();
+                  // ctx.moveTo(10, analyserCanvas.current.height);
+                  // ctx.lineTo(10, analyserCanvas.current.height - volumn);
+                  // ctx.stroke();
                 };
 
-                const loopingFunction = () => {
-                  requestAnimationFrame(loopingFunction);
+                // const loopingFunction = () => {
+                //   requestAnimationFrame(loopingFunction);
+                //   analyser.getByteFrequencyData(data);
+                //   draw(data);
+                // };
+
+                // requestAnimationFrame(loopingFunction);
+                const intervalId = setInterval(()=>{
                   analyser.getByteFrequencyData(data);
                   draw(data);
-                };
-
-                requestAnimationFrame(loopingFunction);
+                },200);
+                return () => {
+                  clearInterval(intervalId);
+                }
               } catch(err){
                 throw(500,err);
               }
@@ -86,7 +95,7 @@ const AudioTest = () => {
       <div>
         <canvas ref={analyserCanvas}></canvas>
         <h2 style={{textAlign:"center"}}>
-          {word}
+          {decibel}
         </h2>
       </div>
     )
