@@ -1,15 +1,15 @@
 import React from "react";
 import { useRef,useState, useEffect, useCallback } from "react";
 
-const AudioTest =  () =>  {
-    const [word,setWord] = useState('조용하다');
+const AudioTest = () => {
+    const [decibel,setDecibel] = useState(0);
     const analyserCanvas = useRef(null);
     const [mediaStream, setMediaStream] = useState(null);
     const options = {
         video: false,
         audio: true,
       };
-   
+    
     useEffect(()=>{
         async function enableStream() {
             try{
@@ -23,16 +23,11 @@ const AudioTest =  () =>  {
 
                 
                 const ctx = analyserCanvas.current.getContext('2d');
-                let count = 1;
-                analyserCanvas.height = window.innerHeight;
-                analyserCanvas.width = window.innerWidth;
+                
+                
+                analyserCanvas.current.width = 300;
+                analyserCanvas.current.height = 100;
                 const draw = dataParm => {
-                  dataParm = [...dataParm];
-                  
-                  if(count==1){
-                    console.log(dataParm);
-                    count++;
-                  }
                   ctx.fillStyle = 'white';
                   ctx.fillRect(0,0,analyserCanvas.current.width,analyserCanvas.current.height)
                   ctx.lineWidth = 2;
@@ -41,32 +36,48 @@ const AudioTest =  () =>  {
                   // console.log((Math.max(...dataParm)));
                   // useCallback(() => setNoise(Math.max(...dataParm)),[]);
                   // setNoise(Math.max(...dataParm));
-                  // let volumn = Math.max(...dataParm);
-                  // if( 100 < volumn && volumn < 200){
-                  //   setWord('조금 시끄럽다');
-                  // } else if(volumn >= 200){
-                  //   setWord('시끄럽다');
-                  // } else {
-                  //   setWord('조용하다');
-                  // }
+                  let volumn = Math.floor((Math.max(...dataParm)/255)*100);
                   
-                  dataParm.forEach((value, i) => {
-                    
-                    ctx.beginPath();
-                    ctx.moveTo(space * i, analyserCanvas.current.height);
-                    ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
-                    ctx.stroke();
-                  }
-                  );
+                  
+                  // console.log(volumn);
+                  // dataParm.forEach((value, i) => {
+                  //   ctx.beginPath();
+                  //   ctx.moveTo(space * i, analyserCanvas.current.height);
+                  //   ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
+                  //   ctx.stroke();
+                  // }
+                  // );
+                  ctx.fillStyle= 'black';
+                  ctx.font = "italic bold 60px Arial, sans-serif";
+                  
+                  ctx.fillText(volumn,150,50);
+                  
+                  // if(volumn> 100){
+                  //   audioArr++;
+                  // } else if(audioArr>0){
+                  //   audioArr--;
+                  // }
+                  // console.log(audioArr);
+                  // ctx.beginPath();
+                  // ctx.moveTo(10, analyserCanvas.current.height);
+                  // ctx.lineTo(10, analyserCanvas.current.height - volumn);
+                  // ctx.stroke();
                 };
 
-                const loopingFunction = () => {
-                  requestAnimationFrame(loopingFunction);
+                // const loopingFunction = () => {
+                //   requestAnimationFrame(loopingFunction);
+                //   analyser.getByteFrequencyData(data);
+                //   draw(data);
+                // };
+
+                // requestAnimationFrame(loopingFunction);
+                const intervalId = setInterval(()=>{
                   analyser.getByteFrequencyData(data);
                   draw(data);
-                };
-
-                requestAnimationFrame(loopingFunction);
+                },100);
+                return () => {
+                  clearInterval(intervalId);
+                }
               } catch(err){
                 throw(500,err);
               }
@@ -86,7 +97,7 @@ const AudioTest =  () =>  {
       <div>
         <canvas ref={analyserCanvas}></canvas>
         <h2 style={{textAlign:"center"}}>
-          {word}
+          
         </h2>
       </div>
     )
