@@ -1,7 +1,7 @@
 import React from "react";
 import { useRef,useState, useEffect, useCallback } from "react";
 
-const AudioTest = () => {
+const AudioTest =  () =>  {
     const [word,setWord] = useState('조용하다');
     const analyserCanvas = useRef(null);
     const [mediaStream, setMediaStream] = useState(null);
@@ -9,7 +9,7 @@ const AudioTest = () => {
         video: false,
         audio: true,
       };
-
+   
     useEffect(()=>{
         async function enableStream() {
             try{
@@ -41,23 +41,23 @@ const AudioTest = () => {
                   // console.log((Math.max(...dataParm)));
                   // useCallback(() => setNoise(Math.max(...dataParm)),[]);
                   // setNoise(Math.max(...dataParm));
-                  let volumn = Math.max(...dataParm);
-                  if( 100 < volumn && volumn < 200){
-                    setWord('조금 시끄럽다');
-                  } else if(volumn >= 200){
-                    setWord('시끄럽다');
-                  } else {
-                    setWord('조용하다');
-                  }
-                  
-                  // dataParm.forEach((value, i) => {
-                    
-                  //   ctx.beginPath();
-                  //   ctx.moveTo(space * i, analyserCanvas.current.height);
-                  //   ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
-                  //   ctx.stroke();
+                  // let volumn = Math.max(...dataParm);
+                  // if( 100 < volumn && volumn < 200){
+                  //   setWord('조금 시끄럽다');
+                  // } else if(volumn >= 200){
+                  //   setWord('시끄럽다');
+                  // } else {
+                  //   setWord('조용하다');
                   // }
-                  // );
+                  
+                  dataParm.forEach((value, i) => {
+                    
+                    ctx.beginPath();
+                    ctx.moveTo(space * i, analyserCanvas.current.height);
+                    ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
+                    ctx.stroke();
+                  }
+                  );
                 };
 
                 const loopingFunction = () => {
