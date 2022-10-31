@@ -1,5 +1,5 @@
 import React from "react";
-import { useRef,useState, useEffect, useCallback } from "react";
+import { useRef,useState, useEffect } from "react";
 
 const AudioTest = () => {
     const [decibel,setDecibel] = useState(0);
@@ -10,6 +10,12 @@ const AudioTest = () => {
         audio: true,
       };
     let volumnArr = [];
+    const [sensivility,setSensivility] = useState(1);
+    const sensivilityRef = useRef(1);
+    const onChange = (e) => {
+      sensivilityRef.current = e.target.value;
+      setSensivility(e.target.value);
+    }
     useEffect(()=>{
         async function enableStream() {
             try{
@@ -33,15 +39,28 @@ const AudioTest = () => {
                   ctx.lineWidth = 2;
                   ctx.strokeStyle = 'blue';
                   const space = analyserCanvas.current.width / dataParm.length;
+
+                  let values = 0;
+                  let length = 200;
+                  for(var i=0; i<length; i++){
+                    values += dataParm[i];
+                  }
+                  let volumn = Math.floor(values /length);
+
                   // console.log((Math.max(...dataParm)));
                   // useCallback(() => setNoise(Math.max(...dataParm)),[]);
                   // setNoise(Math.max(...dataParm));
                   // let volumn = Math.floor((Math.max(...dataParm)/255)*100);
-                  volumnArr.push(Math.floor((Math.max(...dataParm)/255)*100));
+
+
+                  volumnArr.push(volumn);
                   if(volumnArr.length >10){
                     volumnArr.shift();
                   }
-                  let volumn = Math.floor((volumnArr.reduce((a,b) => a+b, 0))/10);
+                  let volumnValue = Math.floor((volumnArr.reduce((a,b) => a+b, 0))/10*sensivilityRef.current);
+                  console.log(sensivilityRef.current)
+
+
                   // console.log(volumn);
                   // dataParm.forEach((value, i) => {
                   //   ctx.beginPath();
@@ -50,17 +69,17 @@ const AudioTest = () => {
                   //   ctx.stroke();
                   // }
                   // );
-                  if(volumn <= 50){
+                  if(volumnValue <= 50){
                     ctx.fillStyle= 'green';
-                  } else if(volumn<=70){
+                  } else if(volumnValue<=70){
                     ctx.fillStyle= '#e2703a';
                   } else {
                     ctx.fillStyle= 'red';
                   }
                   // ctx.fillStyle= 'black';
                   ctx.font = "italic bold 60px Arial, sans-serif";
-                  const textWidth = ctx.measureText(volumn).width;
-                  ctx.fillText(volumn,150-(textWidth/2),50);
+                  const textWidth = ctx.measureText(volumnValue).width;
+                  ctx.fillText(volumnValue,150-(textWidth/2),50);
                   
                   // if(volumn> 100){
                   //   audioArr++;
@@ -101,13 +120,14 @@ const AudioTest = () => {
                 });
             }
         }
-    })
+    },[])
 
     return (
       <div>
         <canvas ref={analyserCanvas}></canvas>
         <h2 style={{textAlign:"center"}}>
-          
+        <input type="range" id="sensivility" name="sensivility" value={sensivility} min="0" max="3" step="0.1" onChange={onChange}></input>
+        
         </h2>
       </div>
     )
