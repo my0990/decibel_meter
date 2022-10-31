@@ -9,7 +9,7 @@ const AudioTest = () => {
         video: false,
         audio: true,
       };
-    
+    let volumnArr = [];
     useEffect(()=>{
         async function enableStream() {
             try{
@@ -36,9 +36,12 @@ const AudioTest = () => {
                   // console.log((Math.max(...dataParm)));
                   // useCallback(() => setNoise(Math.max(...dataParm)),[]);
                   // setNoise(Math.max(...dataParm));
-                  let volumn = Math.floor((Math.max(...dataParm)/255)*100);
-                  
-                  
+                  // let volumn = Math.floor((Math.max(...dataParm)/255)*100);
+                  volumnArr.push(Math.floor((Math.max(...dataParm)/255)*100));
+                  if(volumnArr.length >10){
+                    volumnArr.shift();
+                  }
+                  let volumn = Math.floor((volumnArr.reduce((a,b) => a+b, 0))/10);
                   // console.log(volumn);
                   // dataParm.forEach((value, i) => {
                   //   ctx.beginPath();
@@ -47,10 +50,17 @@ const AudioTest = () => {
                   //   ctx.stroke();
                   // }
                   // );
-                  ctx.fillStyle= 'black';
+                  if(volumn <= 50){
+                    ctx.fillStyle= 'green';
+                  } else if(volumn<=70){
+                    ctx.fillStyle= '#e2703a';
+                  } else {
+                    ctx.fillStyle= 'red';
+                  }
+                  // ctx.fillStyle= 'black';
                   ctx.font = "italic bold 60px Arial, sans-serif";
-                  
-                  ctx.fillText(volumn,150,50);
+                  const textWidth = ctx.measureText(volumn).width;
+                  ctx.fillText(volumn,150-(textWidth/2),50);
                   
                   // if(volumn> 100){
                   //   audioArr++;
