@@ -1,102 +1,127 @@
 import React from "react";
 import { useRef,useState, useEffect, useCallback } from "react";
+import AudioAnalyser from "./AudioAnalyser";
+
 
 const AudioTest = () => {
     const [decibel,setDecibel] = useState(0);
     const analyserCanvas = useRef(null);
-    const [mediaStream, setMediaStream] = useState(null);
+    const [audio,setAudio] = useState(null);
     const options = {
         video: false,
         audio: true,
       };
-    
+    const canvasRef = useRef(null);
+    const sensivilityRef = useRef(1);
+    const [sensivility,setSensivility] = useState(1);
+
+    const getMicrophone = async () => {
+      const audio = await navigator.mediaDevices.getUserMedia({
+        audio: true,
+        video: false
+      });
+      setAudio(audio)
+    }
+    const stopMicrophone = () => {
+      audio.getTracks().forEach(track => track.stop());
+      setAudio(null);
+    }
+
+    const toggleMicrophone = () => {
+      if(audio){
+        stopMicrophone();
+      } else {
+        getMicrophone();
+      }
+    }
+    let [audioData,setAudioData] = useState(new Uint8Array(0));
+    let audioContext = null;
+    let analyser = null;
+    let dataArray = null;
+    let source = null;
+    let rafId = null;
+    let volumnArr = [];
+    const draw = (dataParm) => {
+
+      const canvas = canvasRef.current;
+      const ctx = canvas.getContext('2d');
+      ctx.fillStyle = 'white';
+      ctx.fillRect(0,0,canvasRef.current.width,canvasRef.current.height)
+      ctx.lineWidth = 2;
+      ctx.strokeStyle = 'blue';
+
+
+      let values = 0;
+      let length = 200;
+      for(var i=0; i<length; i++){
+        values += dataParm[i];
+      }
+      let volumn = Math.floor(values /length);
+
+      volumnArr.push(volumn);
+      if(volumnArr.length >10){
+        volumnArr.shift();
+      }
+      let volumnValue = Math.floor((volumnArr.reduce((a,b) => a+b, 0))/10*sensivilityRef.current);
+
+
+      if(volumnValue <= 50){
+        ctx.fillStyle= 'green';
+      } else if(volumnValue<=70){
+        ctx.fillStyle= '#e2703a';
+      } else {
+        ctx.fillStyle= 'red';
+      }
+      // ctx.fillStyle= 'black';
+      ctx.font = "italic bold 60px Arial, sans-serif";
+      const textWidth = ctx.measureText(volumnValue).width;
+      ctx.fillText(Math.max(...dataParm) - 128,150-(textWidth/2),50);
+  }
+
     useEffect(()=>{
-        async function enableStream() {
-            try{
-                const stream =  await navigator.mediaDevices.getUserMedia(options);
-                const audioCtx = new AudioContext();
-                const analyser = audioCtx.createAnalyser();
-                analyser.fftSize = 2048;
-                const audioSrc = audioCtx.createMediaStreamSource(stream);
-                audioSrc.connect(analyser);
-                const data = new Uint8Array(analyser.frequencyBinCount);
+        try {
+            audioContext = new AudioContext();
+            analyser = audioContext.createAnalyser();
+            analyser.fftSize = 2048;
+            
+            source = audioContext.createMediaStreamSource(audio);
+            source.connect(analyser);
+            dataArray = new Uint8Array(analyser.frequencyBinCount);
+            rafId = requestAnimationFrame(tick);
 
-                
-                const ctx = analyserCanvas.current.getContext('2d');
-                
-                analyserCanvas.height = window.innerHeight;
-                analyserCanvas.width = window.innerWidth;
-                const draw = dataParm => {
-                  // console.log(dataParm);
-                  // dataParm = [...dataParm];
-                  // console.log(dataParm);
-                  
-                  ctx.fillStyle = 'white';
-                  ctx.fillRect(0,0,analyserCanvas.current.width,analyserCanvas.current.height)
-                  ctx.lineWidth = 2;
-                  ctx.strokeStyle = 'blue';
-                  const space = analyserCanvas.current.width / dataParm.length;
-                  // console.log((Math.max(...dataParm)));
-                  // useCallback(() => setNoise(Math.max(...dataParm)),[]);
-                  // setNoise(Math.max(...dataParm));
-                  let volumn = Math.max(...dataParm);
-                  
-                  
-                  // console.log(volumn);
-                  dataParm.forEach((value, i) => {
-                    ctx.beginPath();
-                    ctx.moveTo(space * i, analyserCanvas.current.height);
-                    ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
-                    ctx.stroke();
-                  }
-                  );
-                  // if(volumn> 100){
-                  //   audioArr++;
-                  // } else if(audioArr>0){
-                  //   audioArr--;
-                  // }
-                  // console.log(audioArr);
-                  // ctx.beginPath();
-                  // ctx.moveTo(10, analyserCanvas.current.height);
-                  // ctx.lineTo(10, analyserCanvas.current.height - volumn);
-                  // ctx.stroke();
-                };
-
-                // const loopingFunction = () => {
-                //   requestAnimationFrame(loopingFunction);
-                //   analyser.getByteFrequencyData(data);
-                //   draw(data);
-                // };
-
-                // requestAnimationFrame(loopingFunction);
-                const intervalId = setInterval(()=>{
-                  analyser.getByteFrequencyData(data);
-                  draw(data);
-                },200);
-                return () => {
-                  clearInterval(intervalId);
-                }
-              } catch(err){
-                throw(500,err);
-              }
-        }
-        if (!mediaStream) {
-            enableStream();
-        } else {
-            return function cleanup() {
-                mediaStream.getTracks().forEach(track => {
-                    track.stop();
-                });
+            
+            return () => {
+                cancelAnimationFrame(rafId);
+                analyser.disconnect();
+                source.disconnect();
             }
+        } catch (e) {
+            console.log(e);
         }
-    })
+
+    },[audio])
+
+    const tick = () => {
+
+        draw(dataArray);
+        analyser.getByteTimeDomainData(dataArray);
+        setAudioData(dataArray);
+        rafId = requestAnimationFrame(tick);
+    }
+
+
 
     return (
       <div>
-        <canvas ref={analyserCanvas}></canvas>
+        {/* <canvas ref={analyserCanvas}></canvas>
         <h2 style={{textAlign:"center"}}>
           {decibel}
-        </h2>
+        </h2> */}
+        <button onClick={toggleMicrophone}>
+          {audio ? 'stop' : 'get'}
+        </button>
+        <canvas ref={canvasRef} />
+        {/* <AudioAnalyser audio={audio} /> */}
       </div>
     )
 }
