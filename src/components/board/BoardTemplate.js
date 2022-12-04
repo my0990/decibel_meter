@@ -25,7 +25,6 @@ const BoardTemplateContainer = styled.div`
 const BoardTemplate = () => {
     return(
         <BoardTemplateContainer >
-            <h1>판서</h1>
             <div className="board" contentEditable>
                 Pure Chalk Board
             </div>
