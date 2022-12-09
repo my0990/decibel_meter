@@ -3,7 +3,7 @@ import Split from 'react-split';
 import styled from 'styled-components';
 import BoardTemplate from './components/board/BoardTemplate';
 import TimerTemplate from './components/timer/TimerTemplate';
-import DecibelTemplate from './components/decibel/DecibelTemplate';
+import AudioVisualiser from './components/decibel/AudioVisualiser';
 import './App.css';
 
 const Container = styled.div`
@@ -29,7 +29,7 @@ function App(){
               minSize={10}
             >
               <TimerTemplate/>
-              <DecibelTemplate />
+              <AudioVisualiser />
             </Split>
             <BoardTemplate />
       </Split>
