@@ -1,11 +1,11 @@
 self.__precacheManifest = [
   {
-    "revision": "4b00c2603ee10ff2763b",
+    "revision": "f090c7fde70564fc2287",
     "url": "/decibel_meter/static/css/main.abb1b381.chunk.css"
   },
   {
-    "revision": "4b00c2603ee10ff2763b",
-    "url": "/decibel_meter/static/js/main.0b8f4ec4.chunk.js"
+    "revision": "f090c7fde70564fc2287",
+    "url": "/decibel_meter/static/js/main.98646d56.chunk.js"
   },
   {
     "revision": "8db6d78cdaf0619c14db",
@@ -40,7 +40,7 @@ self.__precacheManifest = [
     "url": "/decibel_meter/static/media/basic.c2f596fe.png"
   },
   {
-    "revision": "640d750fe76e1a31d9a26712128d9d84",
+    "revision": "b28f4f5582290e4cadfb804cfea997fa",
     "url": "/decibel_meter/index.html"
   }
 ];
