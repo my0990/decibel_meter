@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/3.6.3/workbox-sw.js");
 
 importScripts(
-  "/decibel_meter/precache-manifest.df20d270910746c610160734ef9a073e.js"
+  "/decibel_meter/precache-manifest.1fef423116f1fd780d5a4887228b89e0.js"
 );
 
 workbox.clientsClaim();
