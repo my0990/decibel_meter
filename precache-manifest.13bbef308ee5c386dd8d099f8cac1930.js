@@ -40,7 +40,7 @@ self.__precacheManifest = [
     "url": "/decibel_meter/static/media/basic.c2f596fe.png"
   },
   {
-    "revision": "577a7d67eee035399548cbf5eb634946",
+    "revision": "bb58b6c70f04743ff10fcbdee5207c17",
     "url": "/decibel_meter/index.html"
   }
 ];
