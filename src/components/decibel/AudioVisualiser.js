@@ -1,16 +1,73 @@
 import React, { useEffect, useRef, useState } from 'react';
 import styled from "styled-components";
+import RangeInput from './RangeInput';
+import angry from '../../imgs/angry.png';
+import suspicious from '../../imgs/suspicious.png';
+import sleep from '../../imgs/basic.png';
+import happy from '../../imgs/happy.png';
 
 
+const DecibelTemplateContainer = styled.div`
+    overflow: hidden;
+    // display: flex;
+    background-color: white;
+    justify-content: center;
+    // flex-direction: column;
+
+    .alertRecord {
+        cursor: pointer;
+        font-family: Noto Sans KR;
+        text-align: center;
+        margin-bottom: 0;
+    }
+    .decibel_menu_container {
+        position: absolute;
+        right: 10px;
+        top: 10px;
+        float: right;
+        display: flex;
+        justify-content: end;
+        .decibel_menu_wrapper {
+            margin: 0 20px 0 0;
+
+        }
+    }
+    .decibel_start_btn {
+        width: 100%;
+        height: 300px;
+        text-align: center;
+        display: flex;
+
+        position: relative;
+        justify-content: center;
+        align-items: center;
+    }
+    img {
+        display: block;
+        margin:  10px auto;
+    }
+
+`
+const SpaceDiv = styled.div`
+    width: 300px;
+    height: 150px;
+    display: block;
+`
+
+const settings = {
+    bars: 3000,
+    spacing: 6,
+    width: 10,
+    height: 200
+  };
 
 const AudioVisualiser = ({audioData}) => {
-    
-    const DecibelTemplateContainer = styled.div`
-        overflow: hidden;
-        h1 {margin: 0}
-    `
-
-    const analyserCanvas = useRef(null);
+    const volumeRefs = useRef(new Array(0));
+    const [alert,setAlert] = useState(0);
+    const sensitivity = useRef(0);
+    const prevTime = useRef(true);
+    const [test,setTest] = useState(0);
+    const canvasRef = useRef(null);
     const [audio,setAudio] = useState(null);
     // 오디오 미디어 스트림 가져오고 스테이트에 저장
     const getMicrophone = async () => {
@@ -32,92 +89,153 @@ const AudioVisualiser = ({audioData}) => {
             getMicrophone();
         }
     }
+    const [src,setSrc] = useState(happy);
+    const testRef = useRef(1);
+
 
     useEffect(()=>{
         if(audio){
-            try{
+            try {
                 const audioCtx = new AudioContext();
                 const analyser = audioCtx.createAnalyser();
                 analyser.fftSize = 2048;
                 const audioSrc = audioCtx.createMediaStreamSource(audio);
                 audioSrc.connect(analyser);
                 const data = new Uint8Array(analyser.frequencyBinCount);
-    
                 
-                const ctx = analyserCanvas.current.getContext('2d');
+
+                const ctx = canvasRef.current.getContext('2d');
+
+                canvasRef.current.width = 500;
+                canvasRef.current.height = 300;
                 
-                analyserCanvas.height = window.innerHeight;
-                analyserCanvas.width = window.innerWidth;
+
+                const cw = canvasRef.current.width / 2;
+                const ch = canvasRef.current.height / 2;
+
+                // 그릴 텍스트의 넓이 구하기
+                
+
+                
+                
+
+
                 const draw = dataParm => {
-                  ctx.fillStyle = 'white';
-                  ctx.fillRect(0,0,analyserCanvas.current.width,analyserCanvas.current.height)
-                  ctx.lineWidth = 2;
-                  ctx.strokeStyle = 'blue';
-                  const space = analyserCanvas.current.width / dataParm.length;
-                  dataParm.forEach((value, i) => {
+                    let e = 0
+                    for (let index = 0; index < 512; index++) {
+                        e += dataParm[index];
+                    }
+                    const decibel = Math.floor((e/512)*sensitivity.current.value*0.3);
+                    if(decibel<=50){
+                        testRef.current = 1
+                    } else if(decibel <= 100){
+                        testRef.current = 2
+                    } else {
+                        testRef.current = 3
+                    }
+                    
+                    if(prevTime.current && decibel > 100){
+                        setAlert(prev => prev+1);
+                        prevTime.current = false;
+                        setTimeout(()=>{
+                            prevTime.current = true;
+                        }, 5000);
+                    }
+                    if(testRef.current==1){
+                        setSrc(happy);
+                    } else if(testRef.current==2){
+                        setSrc(suspicious);
+                    } else {
+                        setSrc(angry);
+                    }
+                    
+                    // test
+                    volumeRefs.current.unshift(decibel);
+                    if(volumeRefs.current.length > 500){
+                        volumeRefs.current.pop()
+                    }
+                    
+
+  
+                    // 300
+                    const height = canvasRef.current.height/2;
+                    // 150
+                    const width = canvasRef.current.width;
+
+                    const textWidth = ctx.measureText(decibel).width;
+                    let x = 0
+                    const sliceWidth = (width)/500;
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#000000';
+                    ctx.clearRect(0, 0, width, height*2);
                     ctx.beginPath();
-                    ctx.moveTo(space * i, analyserCanvas.current.height);
-                    ctx.lineTo(space * i, analyserCanvas.current.height - value*0.5);
-                    ctx.stroke();
-                  }
-                  );
-                }
+                    ctx.moveTo(0,volumeRefs.current[-1]);
+                    for (const item of volumeRefs.current) {
+                        const y = item;
+                        ctx.lineTo(x, (-y+200));
+                        x += sliceWidth;
+                      }
+                      ctx.lineTo(x,volumeRefs.current[-1]);
+                      ctx.stroke();
 
+                    // ctx.fillStyle = 'white';
+                    // ctx.fillRect(0, 0, canvasRef.current.width, canvasRef.current.height);
+                    // ctx.fillStyle = 'black';
+                    // ctx.font = 'bold 100px Arial';
+                    // ctx.fillText(
+                    //     decibel,
+                    //     cw - (textWidth / 2),
+                    //     ch + 30
+                    //     );
+          
+                    // ctx.fill();
+
+                };
                 const intervalId = setInterval(()=>{
-                  analyser.getByteFrequencyData(data);
-                  draw(data);
-                },1000);
-                return () => {
-                  clearInterval(intervalId);
-                }
-              } catch(err){
-                throw(500,err);
-              }
+                    analyser.getByteFrequencyData(data);
+                    draw(data);
+                  },10);
+                  return () => {
+                    clearInterval(intervalId);
+                  }
+            } catch(e) {
+                throw(500, e);
             }
-    },[audio]);
-    
+        }
+        return () => stopMicrophone;
+    },[audio])
 
-    // const draw = () => {
-    //     console.log(audio);
-        
-    //     const canvas = canvasRef.current;
-        // const height = canvas.height;
-        // const width = canvas.width;
-        // const context = canvas.getContext('2d');
-        // let x = 0;
-        // const sliceWidth = (width * 1.0 ) / data.length;
-
-        // context.lineWidth = 2;
-        // context.strokeStyle = '#000000';
-        // context.clearRect(0,0, width, height);
-
-        // context.beginPath();
-        // context.moveTo(0, height/2);
-
-        // for (const item of data){
-        //     const y = (item / 255.0) * height;
-        //     context.lineTo(x,y);
-        //     x += sliceWidth;
-        // }
-
-        // context.lineTo(x, height/2);
-        // context.stroke();
-    // }
-    // useEffect(()=>{
-    //     const intervalId = setInterval(()=>{
-    //         draw();
-    //     },1000)
-    //     return () => clearInterval(intervalId);
-    // })
 
     return(
         <DecibelTemplateContainer>
-            <div>
-                <button onClick={toggleMicrophone}>
-                    {audio ? 'Stop microphone' : 'Get microphone input'}
-                </button>
+            <div className='decibel_start_btn'>
+                {audio 
+                    ? <canvas ref={canvasRef} onClick={toggleMicrophone}/> 
+                    :<button onClick={toggleMicrophone}>
+                        소음측정 시작
+                    </button>
+                }
+                <div className='decibel_menu_container'>
+                    <div className="decibel_menu_wrapper">
+                        <p 
+                            title="클릭하여 삭제"
+                            className="alertRecord"
+                            onClick={()=> setAlert(0)}
+                        >
+                                시끄러웠던 횟수: {alert}
+                        </p>
+                        <div>
+                            {audio 
+                                ? <img src={src} width='100px' height='100px' /> 
+                                : <img src={sleep} width='100px' height='100px' />
+                            }
+                        </div>
+                        <RangeInput sensitivity={sensitivity}/>
+                        
+                    </div>
+                </div>
             </div>
-            <canvas ref={analyserCanvas} />
+            
         </DecibelTemplateContainer>
     )
 }
