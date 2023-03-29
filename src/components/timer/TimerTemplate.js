@@ -3,9 +3,9 @@ import styled from "styled-components";
 import { useTimer } from 'react-timer-hook';
 import { useState, useMemo,useRef } from 'react';
 import audioSrc from '../../audios/beef.mp3';
+import useResizeObserver from '../../api/useResizeObserver';
 
 const TimerTemplateContainer = styled.div`
-    // height: 100%;
     
     display: flex;
     flex-direction: column;
@@ -13,7 +13,7 @@ const TimerTemplateContainer = styled.div`
     align-items:center;
     overflow: hidden;
     background: gray;
-    // min-width: 100%;
+    padding: 1rem;
     .btnWrapper {
         min-width: 500px;
         text-algin: center;
@@ -41,11 +41,11 @@ const TimerTemplateContainer = styled.div`
             background-color: black;
             border: none;
             color: white;
-            font-size: 15rem;
+            font-size: 15rem; 
             font-family: Gugi;
             border-radius: 20px;
             outline: none;
-            
+
         }
         input::-webkit-outer-spin-button,
         input::-webkit-inner-spin-button {
@@ -58,7 +58,6 @@ const TimerTemplateContainer = styled.div`
         }
     }
     .timeDisplayWrapper {
-        min-width: 1050px;
         background: white;
         border-radius: 20px;
         padding-bottom: 10px;
@@ -154,7 +153,19 @@ const ClockBtn = styled.button`
 const audio = new Audio(audioSrc);
 function TimerTemplate() {
 
-    
+    const componentRef = useRef();
+    const [width, height, top, left] = useResizeObserver(
+        componentRef,
+        printResize,
+        true
+      );
+
+
+    function printResize(width,height) {
+        // console.log(entry.target);
+        console.log(`width: ${width}px; height: ${height}px`);
+        console.log(`top: ${top}px; left: ${left}px`);
+    }
     const expiryTimestamp = useMemo(()=> new Date(),[]);
     
     const [firstTime,setFirstTime] = useState(null);
@@ -181,7 +192,6 @@ function TimerTemplate() {
         } 
     }});
 
- 
 
     const setMinute = (number) => {
         let current = new Date();
@@ -301,7 +311,7 @@ function TimerTemplate() {
         second: ''
     });
     return(
-        <TimerTemplateContainer>
+        <TimerTemplateContainer ref={componentRef}>
             <div className='btnWrapper'>
                 <MinuteBtn onClick={() => setMinute(60)}>1분</MinuteBtn>
                 <MinuteBtn onClick={() => setMinute(180)}>3분</MinuteBtn>
@@ -310,7 +320,7 @@ function TimerTemplate() {
                 {/* <button onClick={() => console.log(expiryTimestamp)}>test</button> */}
             </div>
             <div className='timeDisplayWrapper'>
-                <div className="timeDisplay">
+                <div className="timeDisplay" style={{width:width,height:height}}>
                     <input className={isStart ? 'caret' : null} type="number" name="hour" value={isFocused.hour ? texts.hour : String(hours).padStart(2,'0')} onFocus={onFocus} onBlur={onBlur} onChange={onChange}></input>:
                     <input className={isStart ? 'caret' : null} type="number" name="minute" value={isFocused.minute ? texts.minute : String(minutes).padStart(2,'0')} onFocus={onFocus} onBlur={onBlur} onChange={onChange}></input>:
                     <input className={isStart ? 'caret' : null} type="number" name="second" value={isFocused.second ? texts.second : String(seconds).padStart(2,'0')} onFocus={onFocus} onBlur={onBlur} onChange={onChange}></input>
