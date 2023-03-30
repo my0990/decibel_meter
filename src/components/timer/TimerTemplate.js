@@ -24,24 +24,28 @@ const TimerTemplateContainer = styled.div`
     }
     .timeDisplay {
         font-family: Gugi;
-        font-size: 15rem;
+        // font-size: 15rem;
         background: black;
         padding: 1rem;
         margin: 0.5rem;
         border-radius: 20px;
         color: white;
         border: 10px solid white;
+        text-align: center;
+        display: flex;
+        justify-content: center;
+        align-item: center;
         .caret {
             caret-color: transparent;
         }
         input {
-            width: 270px;
-            height: 240px;
+            width: 25%;
+            // height: 240px;
             display: inline;
             background-color: black;
             border: none;
             color: white;
-            font-size: 15rem; 
+            // font-size: 15rem; 
             font-family: Gugi;
             border-radius: 20px;
             outline: none;
@@ -320,10 +324,10 @@ function TimerTemplate() {
                 {/* <button onClick={() => console.log(expiryTimestamp)}>test</button> */}
             </div>
             <div className='timeDisplayWrapper'>
-                <div className="timeDisplay" style={{width:width,height:height}}>
-                    <input className={isStart ? 'caret' : null} type="number" name="hour" value={isFocused.hour ? texts.hour : String(hours).padStart(2,'0')} onFocus={onFocus} onBlur={onBlur} onChange={onChange}></input>:
-                    <input className={isStart ? 'caret' : null} type="number" name="minute" value={isFocused.minute ? texts.minute : String(minutes).padStart(2,'0')} onFocus={onFocus} onBlur={onBlur} onChange={onChange}></input>:
-                    <input className={isStart ? 'caret' : null} type="number" name="second" value={isFocused.second ? texts.second : String(seconds).padStart(2,'0')} onFocus={onFocus} onBlur={onBlur} onChange={onChange}></input>
+                <div className="timeDisplay" style={{width:width,height:height,fontSize:width * 0.22 + 'px'}}>
+                    <input style={{fontSize:width * 0.22 + 'px'}} className={isStart ? 'caret' : null} type="number" name="hour" value={isFocused.hour ? texts.hour : String(hours).padStart(2,'0')} onFocus={onFocus} onBlur={onBlur} onChange={onChange}></input>:
+                    <input style={{fontSize:width * 0.22 + 'px'}} className={isStart ? 'caret' : null} type="number" name="minute" value={isFocused.minute ? texts.minute : String(minutes).padStart(2,'0')} onFocus={onFocus} onBlur={onBlur} onChange={onChange}></input>:
+                    <input style={{fontSize:width * 0.22 + 'px'}} className={isStart ? 'caret' : null} type="number" name="second" value={isFocused.second ? texts.second : String(seconds).padStart(2,'0')} onFocus={onFocus} onBlur={onBlur} onChange={onChange}></input>
                 </div>
                 <div className='btnWrapperBelow'>
                     {isStart ? <ClockBtn onClick={onPause}>Pause</ClockBtn>  : <ClockBtn onClick={onStart}>start</ClockBtn> }

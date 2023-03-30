@@ -23,12 +23,12 @@ function useResizeObserver(ref, callback, isResize) {
       // 3-2. 관측된 요소가 있는 경우 첫 번쨰 항목을 가져온다.
       const entry = entries[0];
       const { width, height, top, left } = entry.contentRect;
-      if(width/height >= 2.618){
-        setWidth(height * 2.618);
-        setHeight(height);
+      if(width/height >= 4){
+        setWidth(height * 4 * 0.9);
+        setHeight(height * 0.6);
       } else {
-        setHeight(width / 2.618);
-        setWidth(width);
+        setHeight((width / 4) * 0.8);
+        setWidth(width * 0.8 );
       }
       // 3-3. 변경된 width, height, top, left를 설정한다.
     //   setWidth(width);
