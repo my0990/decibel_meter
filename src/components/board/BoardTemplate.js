@@ -1,39 +1,43 @@
-import React, {useEffect, useState} from 'react'
+import React, {useEffect, useState, useRef} from 'react'
 import styled from "styled-components";
-import { useQuill } from 'react-quilljs';
-// or const { useQuill } = require('react-quilljs');
-import 'quill/dist/quill.snow.css'; // Add css for snow theme
-// or import 'quill/dist/quill.bubble.css'; // Add css for bubble theme
-const Container = styled.div`
-    background-color: yellow;
-    width: 500;
-    height: 300;
-    border: none;
-    overflow: hidden;
-    .ql-container {
-        background-color: skyblue;
-    }
-`
-const Wrapper = styled.div`
-    margin: 30px;
-    min-width: 1000px;
-    border-radius: 10px;
-    height: 500px;
-    border: none;
+import { Editor } from '@tinymce/tinymce-react';
 
-`
 export default () => {
-    const { quill, quillRef } = useQuill();
-  
-    console.log(quill);    // undefined > Quill Object
-    console.log(quillRef); // { current: undefined } > { current: Quill Editor Reference }
-  
+    const editorRef = useRef(null);
+    // const log = () => {
+    //   if (editorRef.current) {
+    //     console.log(editorRef.current.getContent());
+    //   }
+    // };
     return (
-    <Container>
-        <Wrapper>
-            <div ref={quillRef} />
-        </Wrapper>
-      </Container>
+      <div>
+        <Editor
+         onInit={(evt, editor) => editorRef.current = editor}
+         apiKey='qw9yikdbp0cjvowgr7fuv36c39o7939ou4d6a818gsi9pj4s'
+         initialValue="<p>This is the initial content of the editor.</p>"
+         init={{
 
+           height: 500,
+           menubar: false,
+           plugins: [
+             'advlist autolink lists link image charmap print preview anchor',
+             'searchreplace visualblocks code fullscreen',
+             'insertdatetime media paste code help wordcount',
+             'quickbars'
+           ],
+           quickbars_insert_toolbar: false,
+
+           advlist_bullet_styles: 'square',
+           advlist_number_styles: 'lower-alpha',
+           toolbar: 'undo redo | formatselect | ' +
+           'bold italic backcolor | alignleft aligncenter ' +
+           'alignright alignjustify | bullist numlist outdent indent | ' +
+           'numlist bullist',
+           content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
+           
+         }}
+       />
+        {/* <button onClick={log}>Log editor content</button> */}
+      </div>
     );
-  };
+  }
