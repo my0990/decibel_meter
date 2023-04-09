@@ -4,40 +4,53 @@ import { Editor } from '@tinymce/tinymce-react';
 
 export default () => {
     const editorRef = useRef(null);
-    // const log = () => {
-    //   if (editorRef.current) {
-    //     console.log(editorRef.current.getContent());
-    //   }
-    // };
+    
+    const Container = styled.div`
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background-color: red;
+
+      div{
+        margin: 2em;
+        width: 100%;
+
+
+      }
+    `
     return (
-      <div>
+      <Container>
         <Editor
          onInit={(evt, editor) => editorRef.current = editor}
-         apiKey='qw9yikdbp0cjvowgr7fuv36c39o7939ou4d6a818gsi9pj4s'
-         initialValue="<p>This is the initial content of the editor.</p>"
+         apiKey={process.env.REACT_APP_TINYMCE_KEY}
          init={{
-
-           height: 500,
+           statusbar: false,
+           height: '95%',
            menubar: false,
            plugins: [
              'advlist autolink lists link image charmap print preview anchor',
              'searchreplace visualblocks code fullscreen',
              'insertdatetime media paste code help wordcount',
-             'quickbars'
+             'quickbars',
+             'image'
            ],
            quickbars_insert_toolbar: false,
-
            advlist_bullet_styles: 'square',
            advlist_number_styles: 'lower-alpha',
-           toolbar: 'undo redo | formatselect | ' +
-           'bold italic backcolor | alignleft aligncenter ' +
-           'alignright alignjustify | bullist numlist outdent indent | ' +
-           'numlist bullist',
-           content_style: 'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
-           
+           toolbar: false,
+           content_style: 'body { font-family:Helvetica,Arial,sans-serif;background-color:gray;color: white; font-size: 2rem; }'
++
+           `.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
+              color: white;
+              opacity: 0.4;
+              position: absolute;
+              top: 2rem;
+           }
+           `,
+          //  placeholder: '내용을 적어주세요'
          }}
        />
         {/* <button onClick={log}>Log editor content</button> */}
-      </div>
+      </Container>
     );
   }
