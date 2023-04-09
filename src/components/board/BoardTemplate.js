@@ -9,13 +9,21 @@ export default () => {
       display: flex;
       align-items: center;
       justify-content: center;
-      background-color: red;
+
 
       div{
-        margin: 2em;
+        
         width: 100%;
-
-
+      }
+      & .tox-edit-area__iframe{
+        background-color: #274c43 !important;
+        border: 10px solid rgb(183, 130, 64) !important; 
+        p {
+          margin: 0 !important;
+        }
+      }
+      & .tox-tinymce{
+        border: none!important;
       }
     `
     return (
@@ -25,7 +33,7 @@ export default () => {
          apiKey={process.env.REACT_APP_TINYMCE_KEY}
          init={{
            statusbar: false,
-           height: '95%',
+           height: '100%',
            menubar: false,
            plugins: [
              'advlist autolink lists link image charmap print preview anchor',
@@ -38,16 +46,16 @@ export default () => {
            advlist_bullet_styles: 'square',
            advlist_number_styles: 'lower-alpha',
            toolbar: false,
-           content_style: 'body { font-family:Helvetica,Arial,sans-serif;background-color:gray;color: white; font-size: 2rem; }'
+           quickbars_selection_toolbar: 'h1 h2 h3 h4 h5 h6 blockquote',
+           content_style: 'body { font-family:Helvetica,Arial,sans-serif;background-color:rgb(73, 121, 89);color: white; font-size: 2rem;}'
 +
            `.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {
               color: white;
               opacity: 0.4;
-              position: absolute;
-              top: 2rem;
+
            }
            `,
-          //  placeholder: '내용을 적어주세요'
+           placeholder: '내용을 적어주세요'
          }}
        />
         {/* <button onClick={log}>Log editor content</button> */}
