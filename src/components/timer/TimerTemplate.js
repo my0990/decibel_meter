@@ -17,7 +17,7 @@ const TimerTemplateContainer = styled.div`
     align-items:center;
     overflow: hidden;
     background: gray;
-    padding: 1rem;
+    // padding: 1rem;
     .btnWrapper {
         text-algin: center;
         min-width: 161px;
