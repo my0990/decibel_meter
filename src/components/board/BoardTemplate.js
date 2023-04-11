@@ -34,7 +34,7 @@ export default () => {
       />
         <Editor
          onInit={(evt, editor) => editorRef.current = editor}
-         apiKey={process.env.REACT_APP_TINYMCE_KEY}
+         apiKey='qw9yikdbp0cjvowgr7fuv36c39o7939ou4d6a818gsi9pj4s'
          init={{
            statusbar: false,
            height: '100%',
