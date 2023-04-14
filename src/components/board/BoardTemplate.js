@@ -23,6 +23,7 @@ export default () => {
       & .tox-tinymce{
         border: none!important;
       }
+
     `
     return (
       <Container>
@@ -40,18 +41,16 @@ export default () => {
            height: '100%',
            menubar: false,
            plugins: [
-             'advlist autolink lists link image charmap print preview anchor',
-             'searchreplace visualblocks code fullscreen',
-             'insertdatetime media paste code help wordcount textcolor',
+            //  'autolink link  charmap print preview anchor',
+            //  'searchreplace visualblocks code fullscreen',
+            //  'insertdatetime media paste  help wordcount textcolor',
              'quickbars',
              'image'
            ],
            quickbars_insert_toolbar: false,
-           advlist_bullet_styles: 'square',
-           advlist_number_styles: 'lower-alpha',
            toolbar: false,
            quickbars_selection_toolbar: 'alignjustify alignleft aligncenter alignright || forecolor backcolor|| h1 h2 h3 h4 h5 h6 || strikethrough underline redo undo image',
-           content_style: "body { font-family:Helvetica,Arial,sans-serif;background-color:rgb(73, 121, 89);color: white; font-size: 2rem;}.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {color: white;opacity: 0.4;} h1,h2,h3,h4,h5,h6,p{margin:0};"
+           content_style: "body { margin: 3rem; font-family:Helvetica,Arial,sans-serif;background-color:rgb(73, 121, 89);color: white; font-size: 3.5rem;}.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {color: white;opacity: 0.4;} h1,h2,h3,h4,h5,h6,p{margin:0} .mce-content-body ol{margin:0;};"
            ,
            placeholder: '내용을 적어주세요',
            automatic_uploads: true,
