@@ -1,7 +1,7 @@
 import React, {useEffect, useState, useRef} from 'react'
 import styled from "styled-components";
 import { Editor } from '@tinymce/tinymce-react';
-
+import bell from "../../audios/bell.wav";
 
 export default () => {
     const editorRef = useRef(null);
@@ -25,6 +25,8 @@ export default () => {
       }
 
     `
+    const audio = new Audio(bell);
+    audio.volume = 1;
     return (
       <Container>
               <input
@@ -40,16 +42,34 @@ export default () => {
            statusbar: false,
            height: '100%',
            menubar: false,
+           contextmenu: ' bell | quickimage',
+           setup: function(editor) {
+            editor.ui.registry.addContextMenu('quickimage', {
+            update: function(element) {
+              return ['image'];
+            },
+            
+            });
+            editor.ui.registry.addMenuItem('bell', {
+              icon: 'emoji',
+              text: 'bell',
+              context: 'tools',
+              onAction: function () {
+                  audio.play();
+              }
+          });
+          },
            plugins: [
             //  'autolink link  charmap print preview anchor',
             //  'searchreplace visualblocks code fullscreen',
             //  'insertdatetime media paste  help wordcount textcolor',
              'quickbars',
-             'image'
+             'image',
+             'contextmenu'
            ],
            quickbars_insert_toolbar: false,
            toolbar: false,
-           quickbars_selection_toolbar: 'alignjustify alignleft aligncenter alignright || forecolor backcolor|| h1 h2 h3 h4 h5 h6 || strikethrough underline redo undo image',
+           quickbars_selection_toolbar: 'alignjustify alignleft aligncenter alignright || forecolor backcolor|| h1 h2 h3 h4 h5 h6 || strikethrough underline redo undo',
            content_style: "body { margin: 3rem; font-family:Helvetica,Arial,sans-serif;background-color:rgb(73, 121, 89);color: white; font-size: 3.5rem;}.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {color: white;opacity: 0.4;} h1,h2,h3,h4,h5,h6,p{margin:0} .mce-content-body ol{margin:0;};"
            ,
            placeholder: '내용을 적어주세요',
