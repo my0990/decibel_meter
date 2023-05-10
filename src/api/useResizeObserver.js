@@ -1,5 +1,9 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
+
+const ratio = 0.9
+
+
 function useResizeObserver(ref, callback, isResize) {
   // 1. Custom Hook에서 ResizeObserver 객체를 state로 관리
   const [observer] = useState(
@@ -19,20 +23,21 @@ function useResizeObserver(ref, callback, isResize) {
       if (!Array.isArray(entries)) {
         return;
       }
-
+      
       // 3-2. 관측된 요소가 있는 경우 첫 번쨰 항목을 가져온다.
       const entry = entries[0];
       const { width, height, top, left } = entry.contentRect;
-      if(width < 400 || height < 300){
-        setWidth(315);
-        setHeight(83);
+      if(width < 460 || height < 200){
+        setWidth(460 * ratio);
+        setHeight(200 * ratio);
+        
       } else {
-        if(width/height >=2){
-          setWidth(height * 4 * 0.8 * 0.5);
-          setHeight(height * 0.7 * 0.5);
+        if(width/height >=2.3){
+          setWidth(height * 2.3 * ratio);
+          setHeight(height * ratio);
         } else {
-          setHeight((width / 4) * 0.7);
-          setWidth(width * 0.8 );
+          setHeight((width * 0.43) * ratio);
+          setWidth(width * ratio);
         }
       }
 

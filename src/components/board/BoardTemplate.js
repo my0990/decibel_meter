@@ -3,6 +3,8 @@ import styled from "styled-components";
 import { Editor } from '@tinymce/tinymce-react';
 import bell from "../../audios/bell.wav";
 
+
+// eslint-disable-next-line import/no-anonymous-default-export
 export default () => {
     const editorRef = useRef(null);
     
@@ -10,10 +12,7 @@ export default () => {
       display: flex;
       align-items: center;
       justify-content: center;
-
-
       div{
-        
         width: 100%;
       }
       & .tox-edit-area__iframe{
@@ -21,15 +20,16 @@ export default () => {
         border: 10px solid rgb(183, 130, 64) !important; 
       }
       & .tox-tinymce{
-        border: none!important;
+        border: none !important;
       }
-
     `
+
     const audio = new Audio(bell);
     audio.volume = 1;
+
     return (
       <Container>
-              <input
+        <input
         id="my-file"
         type="file"
         name="my-file"
@@ -59,18 +59,16 @@ export default () => {
               }
           });
           },
-           plugins: [
-            //  'autolink link  charmap print preview anchor',
-            //  'searchreplace visualblocks code fullscreen',
-            //  'insertdatetime media paste  help wordcount textcolor',
-             'quickbars',
-             'image',
-             'contextmenu'
-           ],
+          plugins: [
+            "textpattern", "image", "quickbars","contextmenu"
+        ],
+        text_patterns: [
+         
+        ],
            quickbars_insert_toolbar: false,
            toolbar: false,
-           quickbars_selection_toolbar: 'alignjustify alignleft aligncenter alignright || forecolor backcolor|| h1 h2 h3 h4 h5 h6 || strikethrough underline redo undo',
-           content_style: "body { margin: 3rem; font-family:Helvetica,Arial,sans-serif;background-color:rgb(73, 121, 89);color: white; font-size: 3.5rem;}.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {color: white;opacity: 0.4;} h1,h2,h3,h4,h5,h6,p{margin:0} .mce-content-body ol{margin:0;};"
+           quickbars_selection_toolbar: 'forecolor backcolor|| h1 h2 h3 h4 h5 h6 || alignjustify alignleft aligncenter alignright  ||  strikethrough underline redo undo',
+           content_style: "body { margin: 1rem; font-family:Helvetica,Arial,sans-serif;background-color:rgb(73, 121, 89);color: white; font-size: 3.5rem;}.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {color: white;opacity: 0.4;} h1,h2,h3,h4,h5,h6,p{margin:0} .mce-content-body ol{margin:0 3rem;};"
            ,
            placeholder: '내용을 적어주세요',
            automatic_uploads: true,
@@ -101,4 +99,4 @@ export default () => {
         {/* <button onClick={log}>Log editor content</button> */}
       </Container>
     );
-  }
+        }

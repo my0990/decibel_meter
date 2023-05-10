@@ -1,4 +1,4 @@
-const timerApi = ({texts,expiryTimestamp,setIsFocused,hours,minutes,seconds,setTexts,isStart,firstTime,setFirstTime,isFocused,restart,pause,resume,isPaused,setIsPaused,setIsStart,audio,setIsAlarmStarted,}) => {
+const timerApi = ({texts,expiryTimestamp,setIsFocused,hours,minutes,seconds,setTexts,isStart,firstTime,setFirstTime,isFocused,restart,pause,resume,isPaused,setIsPaused,setIsStart,bell,setIsAlarmStarted,}) => {
     const onChange = (e) => {
         const { value, name } = e.target;
         if(value.length <= 2){
@@ -97,7 +97,7 @@ const timerApi = ({texts,expiryTimestamp,setIsFocused,hours,minutes,seconds,setT
         
         setIsPaused(true);
         setIsStart(false);
-        audio.pause();
+        bell.pause();
         setIsAlarmStarted(false);
         pause();
     }

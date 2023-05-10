@@ -1,18 +1,17 @@
+import { Children } from 'react';
 import styled from'styled-components';
 
-const ClockBtn = styled.button`
+const StartBtnStyle = styled.button`
     appearance: none;
-    background-color: #000000;
-    border: 2px solid #1A1A1A;
-
+    background-color: #BA90C6;
+    font-family: Major Mono Display;
     box-sizing: border-box;
     color: #FFFFFF;
     cursor: pointer;
     display: inline-block;
-    font-family: Roobert,-apple-system,BlinkMacSystemFont,"Segoe UI",Helvetica,Arial,sans-serif,"Apple Color Emoji","Segoe UI Emoji","Segoe UI Symbol";
-    font-weight: 600;
+    border: none;
+    border-radius: 10px;
     line-height: normal;
-    margin: 0;
     outline: none;
     text-align: center;
     text-decoration: none;
@@ -22,8 +21,10 @@ const ClockBtn = styled.button`
     touch-action: manipulation;
     will-change: transform;
 
-   
-    margin: 15px;
+    margin-right: ${(props) => props.width*0.035}px;
+    font-size: ${(props) => props.width * 0.04}px;
+    width: ${(props) => props.width * 0.195}px;
+    height: ${(props) => props.width * 0.08}px;
     
     &:disabled {
     pointer-events: none;
@@ -39,5 +40,10 @@ const ClockBtn = styled.button`
     transform: translateY(0);
     }
 `
+const StartBtn = ({children,...rest}) => {
+    return(
+        <StartBtnStyle {...rest}>{children}</StartBtnStyle>
+    )
+}
 
-export default ClockBtn;
+export default StartBtn;
