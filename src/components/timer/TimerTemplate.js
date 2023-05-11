@@ -1,13 +1,12 @@
 import React from 'react'
 import styled from "styled-components";
 import { useTimer } from 'react-timer-hook';
-import { useState, useMemo,useRef, useEffect } from 'react';
+import { useState, useMemo,useRef, useEffect, useCallback } from 'react';
 import audioSrc from '../../audios/beef.mp3';
 import useResizeObserver from '../../api/useResizeObserver';
 import StartBtn from '../commons/StartBtn';
 import MinuteBtn from '../commons/MinuteBtn';
 import timerApi from '../../api/timerApi';
-import getAudioApi from '../../api/getAudioApi';
 import TimeDisplayWrapper from '../commons/TimeDisplayWrapper';
 import TimeDisplay from '../commons/TimeDisplay';
 import decibelMeterIcon from '../../imgs/measure.png';
@@ -18,7 +17,7 @@ const TimerTemplateContainer = styled.div`
     justify-content: center;
     align-items:center;
     overflow: hidden;
-    background-color:  ${props => props.decibelData >= 1000 ? "#6FD1B5" : props.decibelData > 30 ? "orange" :  props.decibelData > 20? "yellow" : "green"};
+    background-color:  ${props => props.decibelData >= 1000 ? "#6FD1B5" : props.decibelData > 30 ? "orange" :  props.decibelData > 20? "yellow" : "#6FD1B5"};
     transition: all 1.5s ease;
     WebkitTransition: all 1.5s ease;
     MozTransition: all 1.5s ease;
@@ -29,6 +28,13 @@ const TimerTemplateContainer = styled.div`
         font-size: ${props => props.width * 0.05 + 'px'};
         margin-left: ${props => props.width * 0.02 + 'px'};
         vertical-align: top;
+
+    }
+    .noiseNumber{
+        font-family: Major Mono Display;
+        font-size: ${props => props.width * 0.025 + 'px'};
+        align-items: end;
+        display: flex;
     }
 
     button {
@@ -64,12 +70,60 @@ const TimerTemplateContainer = styled.div`
 const bell = new Audio(audioSrc);
 function TimerTemplate() {
     const [audio,setAudio] = useState();
-    const [decibelData,setDecibelData] = useState(1000);
-    const {getMicrophone, stopMicrophone, toggleMicrophone, draw} = getAudioApi({audio,setAudio,setDecibelData});
+    const [decibelData,setDecibelData] = useState(0);
+    const [isDecibelStarted,setIsDecibelStarted] = useState(false);
+    const getMicrophone = async () => {
+        const audio = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false
+        });
+        setAudio(audio);
 
+    }
+    const stopMicrophone = () => {
+        audio.getTracks().forEach(track => track.stop());
+        setAudio(null);
+        console.log(audio);
+    }
+    
+    const toggleMicrophone = () => {
+        if(audio){
+            stopMicrophone();
+        } else {
+            getMicrophone();
+        }
+        setIsDecibelStarted(prev => !prev);
+    }
+    let decibelArr = []
     useEffect(()=>{
-        draw();
-    },[audio]);
+        if(audio){
+            try {
+                const audioCtx = new AudioContext();
+                const analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 2048;
+                const audioSrc = audioCtx.createMediaStreamSource(audio);
+                audioSrc.connect(analyser);
+                const data = new Uint8Array(analyser.frequencyBinCount);
+
+
+                const intervalId = setInterval(()=>{
+                    analyser.getByteFrequencyData(data);
+                    let tmp = data.reduce(function add(sum, currValue) {
+                        return sum + currValue;
+                      }, 0)/100;
+                    
+                      setDecibelData(prev => prev > tmp ? prev - 0.1 : prev + 0.1);
+                  },20);
+                  return () => {
+                    console.log('cleared');
+                    clearInterval(intervalId);
+                  }
+            } catch(e) {
+                throw(500, e);
+            }
+        }
+        return () => stopMicrophone;
+    },[audio])
 
 
     const expiryTimestamp = useMemo(()=> new Date(),[]);
@@ -87,7 +141,8 @@ function TimerTemplate() {
     const [isStart,setIsStart] = useState(false);
     const [isPaused,setIsPaused] = useState(false);
     const [isAlarmStarted,setIsAlarmStarted] = useState(false);
-    const [isDecibelStarted,setIsDecibelStarted] = useState(false);
+    const [noiseNumber,setNoiseNumber] = useState(0);
+
     expiryTimestamp.setSeconds(expiryTimestamp.getSeconds());
     const {
       seconds,
@@ -135,10 +190,12 @@ function TimerTemplate() {
     
     return(
         <TimerTemplateContainer ref={componentRef} decibelData={decibelData} width={width}>
-            <div style={{width:width,marginLeft:width*0.05,marginBottom: width*0.005}}>
-                <img className="decibelBtn" src={decibelMeterIcon} alt='decibel meter' style={{width:width * 0.05,height:width * 0.05}} onClick={getMicrophone}></img>
-                <button onClick={stopMicrophone}>test</button>
-                <span className='decibelNum'>{decibelData >= 1000 ? null : decibelData}</span>
+            <div style={{width:width*0.95, display:'flex', justifyContent:'space-between', marginBottom: width * 0.01}}>
+                <div>
+                    <img className="decibelBtn" src={decibelMeterIcon} alt='decibel meter' style={{width:width * 0.05,height:width * 0.05}} onClick={toggleMicrophone}></img>
+                    <span className='decibelNum'>{isDecibelStarted ? Math.floor(decibelData) : null}</span>
+                </div>
+                {isDecibelStarted ? <span className='noiseNumber'>떠든횟수:{noiseNumber}</span> : null}
             </div>
             <TimeDisplayWrapper style={{width:width,height:height,fontSize:width * 0.22 + 'px',lineHeight: width * 0.2 + 'px'}}>
                 <TimeDisplay style={{fontSize:width * 0.15 + 'px'}} >
