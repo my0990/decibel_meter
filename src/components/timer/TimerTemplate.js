@@ -10,14 +10,14 @@ import timerApi from '../../api/timerApi';
 import TimeDisplayWrapper from '../commons/TimeDisplayWrapper';
 import TimeDisplay from '../commons/TimeDisplay';
 import decibelMeterIcon from '../../imgs/measure.png';
-
+import settingIcon from '../../imgs/setting.png';
 const TimerTemplateContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items:center;
     overflow: hidden;
-    background-color:  ${props => props.decibelData >= 1000 ? "#6FD1B5" : props.decibelData > 30 ? "orange" :  props.decibelData > 20? "yellow" : "#6FD1B5"};
+    background-color:  ${props => props.isDecibelStarted ? "red" : props.decibelData > 30 ? "orange" :  props.decibelData > 20? "yellow" : "#6FD1B5"};
     transition: all 1.5s ease;
     WebkitTransition: all 1.5s ease;
     MozTransition: all 1.5s ease;
@@ -30,10 +30,12 @@ const TimerTemplateContainer = styled.div`
         vertical-align: top;
 
     }
-    .noiseNumber{
+    .noiseNumberWrapper{
         font-family: Major Mono Display;
         font-size: ${props => props.width * 0.025 + 'px'};
-        align-items: end;
+        margin-left: ${props => props.width * 0.025 + 'px'};
+        
+        align-items: center;
         display: flex;
     }
 
@@ -64,7 +66,19 @@ const TimerTemplateContainer = styled.div`
 
     }
 `
-
+const SettingIcon = styled.img`
+    width: 72px;
+    height: 72px;
+    cursor: pointer;
+    opacity: 0.5;
+    &:hover {
+        opacity: 1;
+        scale: 1.1;
+        transition: all 0.1s ease;
+        WebkitTransition: all 0.1s ease;
+        MozTransition: all 0.1s ease;
+    }
+`
 
 
 const bell = new Audio(audioSrc);
@@ -72,6 +86,7 @@ function TimerTemplate() {
     const [audio,setAudio] = useState();
     const [decibelData,setDecibelData] = useState(0);
     const [isDecibelStarted,setIsDecibelStarted] = useState(false);
+    const [noisCheckedTime,setNoiseCheckedTime] = useState(0);
     const getMicrophone = async () => {
         const audio = await navigator.mediaDevices.getUserMedia({
             audio: true,
@@ -93,8 +108,9 @@ function TimerTemplate() {
             getMicrophone();
         }
         setIsDecibelStarted(prev => !prev);
+        setDecibelData(0);
     }
-    let decibelArr = []
+
     useEffect(()=>{
         if(audio){
             try {
@@ -109,13 +125,13 @@ function TimerTemplate() {
                 const intervalId = setInterval(()=>{
                     analyser.getByteFrequencyData(data);
                     let tmp = data.reduce(function add(sum, currValue) {
+                        
                         return sum + currValue;
                       }, 0)/100;
-                    
+                      console.log(tmp);
                       setDecibelData(prev => prev > tmp ? prev - 0.1 : prev + 0.1);
                   },20);
                   return () => {
-                    console.log('cleared');
                     clearInterval(intervalId);
                   }
             } catch(e) {
@@ -125,6 +141,18 @@ function TimerTemplate() {
         return () => stopMicrophone;
     },[audio])
 
+
+    useEffect(()=>{
+        const checkNoise = ({decibelData}) => {
+            let tmpTime = new Date();
+            if(decibelData > 10 && tmpTime.getTime()/1000 - noisCheckedTime > 5){
+                setNoiseNumber(prev => prev + 1);
+                setNoiseCheckedTime(tmpTime.getTime()/1000);
+            }
+        };
+        checkNoise({decibelData});
+        
+    },[decibelData,setDecibelData])
 
     const expiryTimestamp = useMemo(()=> new Date(),[]);
     const [isFocused,setIsFocused] = useState({
@@ -190,13 +218,15 @@ function TimerTemplate() {
     
     return(
         <TimerTemplateContainer ref={componentRef} decibelData={decibelData} width={width}>
-            <div style={{width:width*0.95, display:'flex', justifyContent:'space-between', marginBottom: width * 0.01}}>
-                <div>
+            <div style={{width:width*0.95, display:'flex',justifyContent:'space-between', marginBottom: width * 0.01}}>
+                <div style={{display:'flex'}}>
                     <img className="decibelBtn" src={decibelMeterIcon} alt='decibel meter' style={{width:width * 0.05,height:width * 0.05}} onClick={toggleMicrophone}></img>
-                    <span className='decibelNum'>{isDecibelStarted ? Math.floor(decibelData) : null}</span>
+                    {/* <span className='decibelNum'>{isDecibelStarted ? Math.floor(decibelData) : null}</span> */}
+                    <div className='noiseNumberWrapper'>{isDecibelStarted ? <span>떠든횟수: {noiseNumber}</span> : null}</div>
                 </div>
-                {isDecibelStarted ? <span className='noiseNumber'>떠든횟수:{noiseNumber}</span> : null}
+                <SettingIcon src={settingIcon} style={{width:width * 0.05,height:width * 0.05}}></SettingIcon>
             </div>
+
             <TimeDisplayWrapper style={{width:width,height:height,fontSize:width * 0.22 + 'px',lineHeight: width * 0.2 + 'px'}}>
                 <TimeDisplay style={{fontSize:width * 0.15 + 'px'}} >
                     <input 
