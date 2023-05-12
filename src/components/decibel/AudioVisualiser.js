@@ -122,10 +122,10 @@ const AudioVisualiser = ({audioData}) => {
 
                 const draw = dataParm => {
                     let e = 0
-                    for (let index = 0; index < 512; index++) {
+                    for (let index = 0; index < 128; index++) {
                         e += dataParm[index];
                     }
-                    const decibel = Math.floor((e/512)*sensitivity.current.value*0.3);
+                    const decibel = Math.floor((e/128)*sensitivity.current.value*0.3);
                     if(decibel<=50){
                         testRef.current = 1
                     } else if(decibel <= 100){
@@ -193,6 +193,7 @@ const AudioVisualiser = ({audioData}) => {
                 };
                 const intervalId = setInterval(()=>{
                     analyser.getByteFrequencyData(data);
+                    console.log(data);
                     draw(data);
                   },10);
                   return () => {
