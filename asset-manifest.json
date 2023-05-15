@@ -1,7 +1,7 @@
 {
   "files": {
     "main.css": "/decibel_meter/static/css/main.719d0cc4.css",
-    "main.js": "/decibel_meter/static/js/main.b50cee51.js",
+    "main.js": "/decibel_meter/static/js/main.884d7f1f.js",
     "static/js/651.8c40b31a.chunk.js": "/decibel_meter/static/js/651.8c40b31a.chunk.js",
     "static/media/bell.wav": "/decibel_meter/static/media/bell.a530b6bd0bf216fb82c7.wav",
     "static/media/happy.png": "/decibel_meter/static/media/happy.c992f75230c09c65c726.png",
@@ -9,13 +9,15 @@
     "static/media/angry.png": "/decibel_meter/static/media/angry.e76469b4c3d75a2f34bf.png",
     "static/media/suspicious.png": "/decibel_meter/static/media/suspicious.9927092214919c1da0a5.png",
     "static/media/basic.png": "/decibel_meter/static/media/basic.1fab8c1da617afa23238.png",
+    "static/media/measure.png": "/decibel_meter/static/media/measure.fa8ef56f976938e4edaf.png",
+    "static/media/setting.png": "/decibel_meter/static/media/setting.f6d6e350dbc6a0aa0432.png",
     "index.html": "/decibel_meter/index.html",
     "main.719d0cc4.css.map": "/decibel_meter/static/css/main.719d0cc4.css.map",
-    "main.b50cee51.js.map": "/decibel_meter/static/js/main.b50cee51.js.map",
+    "main.884d7f1f.js.map": "/decibel_meter/static/js/main.884d7f1f.js.map",
     "651.8c40b31a.chunk.js.map": "/decibel_meter/static/js/651.8c40b31a.chunk.js.map"
   },
   "entrypoints": [
     "static/css/main.719d0cc4.css",
-    "static/js/main.b50cee51.js"
+    "static/js/main.884d7f1f.js"
   ]
 }
