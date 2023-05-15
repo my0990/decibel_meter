@@ -33,6 +33,11 @@ const ModalBasicBlock = styled.div`
             background: none;
             font-size: 20px;
             font-family: Major Mono Display;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            &:hover {
+                scale: 1.3;
+            }
         }                                    
     }
     .noiseSensitivityWrapper {
@@ -60,7 +65,7 @@ const ModalBasicBlock = styled.div`
 
 `
 
-const ModalBasic = ({modalOpen,setModalOpen, decibelData}) => {
+const ModalBasic = ({modalOpen,setModalOpen, decibelData, setSensitivity, sensitivity, sensitivityRef}) => {
     const modalRef = useRef(null);
     
     useEffect(() => {
@@ -82,19 +87,24 @@ const ModalBasic = ({modalOpen,setModalOpen, decibelData}) => {
             // document.removeEventListener('touchstart', handler); // 모바일 대응
         };
     });
+
+    const onChange = (e) => {
+        setSensitivity(e.target.value);
+        localStorage.setItem('sensitivity', e.target.value)
+    }
     return(
         <ModalBasicBlock modalOpen={modalOpen} ref={modalRef}>
             <div className="header">
                 <div>
                     settings
                 </div>
-                <button>x</button>
+                <button className="closeBtn" onClick={()=>setModalOpen(false)}>x</button>
             </div>
             <div className="noiseSensitivityWrapper">
                 <div>sensitivity</div>
                 <div className="noiseSensitivityDisplay">
                     <div className="display">{Math.floor(decibelData)}</div>
-                    <input className="slider" type="range"></input>
+                    <input className="slider" type="range" value={sensitivity} onChange={onChange} min={1} max={100} step={0.1} ref={sensitivityRef}></input>
                 </div>
             </div>
 
