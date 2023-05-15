@@ -23,11 +23,11 @@ function App(){
             <Split
               direction='vertical'
               style={{height: '100vh'}}
-              sizes={[70,30]}
+              // sizes={[100,0]}
               minSize={0}
             >
               <TimerTemplate/>
-              <AudioVisualiser />
+              {/* <AudioVisualiser /> */}
             </Split>
             <BoardTemplate/>
       </Split>

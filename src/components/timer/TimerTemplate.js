@@ -1,79 +1,159 @@
 import React from 'react'
 import styled from "styled-components";
 import { useTimer } from 'react-timer-hook';
-import { useState, useMemo,useRef } from 'react';
+import { useState, useMemo,useRef, useEffect, useCallback } from 'react';
 import audioSrc from '../../audios/beef.mp3';
 import useResizeObserver from '../../api/useResizeObserver';
-import StartBtnStyle from '../commons/StartBtnStyle';
-import MinuteBtnStyle from '../commons/MinuteBtnStyle';
+import StartBtn from '../commons/StartBtn';
+import MinuteBtn from '../commons/MinuteBtn';
 import timerApi from '../../api/timerApi';
-
-
+import TimeDisplayWrapper from '../commons/TimeDisplayWrapper';
+import TimeDisplay from '../commons/TimeDisplay';
+import decibelMeterIcon from '../../imgs/measure.png';
+import settingIcon from '../../imgs/setting.png';
 const TimerTemplateContainer = styled.div`
-    
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items:center;
     overflow: hidden;
-    background: gray;
-    padding: 1rem;
+    background-color:  ${props => props.isDecibelStarted ? "red" : props.decibelData > 30 ? "orange" :  props.decibelData > 20? "yellow" : "#6FD1B5"};
+    transition: all 1.5s ease;
+    WebkitTransition: all 1.5s ease;
+    MozTransition: all 1.5s ease;
+    position: relative;
+    .decibelNum{
+        font-family: Major Mono Display;
+        color: #E97777;
+        font-size: ${props => props.width * 0.05 + 'px'};
+        margin-left: ${props => props.width * 0.02 + 'px'};
+        vertical-align: top;
+
+    }
+    .noiseNumberWrapper{
+        font-family: Major Mono Display;
+        font-size: ${props => props.width * 0.025 + 'px'};
+        margin-left: ${props => props.width * 0.025 + 'px'};
+        
+        align-items: center;
+        display: flex;
+    }
+
+    button {
+        transition: none;
+    }
+
     .btnWrapper {
         text-algin: center;
-        min-width: 161px;
+        position: absolute;
     }
-    .btnWrapperBelow {
-        text-align: end;
-        margin-right: 10px;
+    .startBtnWrapper{
+        position: absolute;
     }
-    .timeDisplay {
-        font-family: Gugi;
-        background: black;
-        padding: 1rem;
-        // margin: 0.5rem;
-        border-radius: 20px;
-        color: white;
-        border: 10px solid white;
-        text-align: center;
-        display: flex;
-        justify-content: center;
-        align-item: center;
-        .caret {
-            caret-color: transparent;
+    .decibelBtn{
+        transition: all 0.1s ease;
+        WebkitTransition: all 0.1s ease;
+        MozTransition: all 0.1s ease;
+        cursor: pointer;
+        opacity: 30%;
+        &:hover {
+            scale: 1.1;
+            opacity: 100;
         }
-        input {
-            width: 25%;
-            // height: 240px;
-            display: inline;
-            background-color: black;
-            border: none;
-            color: white;
-            font-family: Gugi;
-            border-radius: 20px;
-            outline: none;
+        &:active{
+            scale: 0.9;
+        }
 
-        }
-        input::-webkit-outer-spin-button,
-        input::-webkit-inner-spin-button {
-            -webkit-appearance: none;
-            margin: 0;
-        }
-  
-        input[type=number] {
-            -moz-appearance: textfield;
-        }
     }
-    .timeDisplayWrapper {
-        background: white;
-        border-radius: 20px;
-        // padding-bottom: 10px;
+`
+const SettingIcon = styled.img`
+    width: 72px;
+    height: 72px;
+    cursor: pointer;
+    opacity: 0.5;
+    &:hover {
+        opacity: 1;
+        scale: 1.1;
+        transition: all 0.1s ease;
+        WebkitTransition: all 0.1s ease;
+        MozTransition: all 0.1s ease;
     }
-
-
 `
 
-const audio = new Audio(audioSrc);
+
+const bell = new Audio(audioSrc);
 function TimerTemplate() {
+    const [audio,setAudio] = useState();
+    const [decibelData,setDecibelData] = useState(0);
+    const [isDecibelStarted,setIsDecibelStarted] = useState(false);
+    const [noisCheckedTime,setNoiseCheckedTime] = useState(0);
+    const getMicrophone = async () => {
+        const audio = await navigator.mediaDevices.getUserMedia({
+            audio: true,
+            video: false
+        });
+        setAudio(audio);
+
+    }
+    const stopMicrophone = () => {
+        audio.getTracks().forEach(track => track.stop());
+        setAudio(null);
+        console.log(audio);
+    }
+    
+    const toggleMicrophone = () => {
+        if(audio){
+            stopMicrophone();
+        } else {
+            getMicrophone();
+        }
+        setIsDecibelStarted(prev => !prev);
+        setDecibelData(0);
+    }
+
+    useEffect(()=>{
+        if(audio){
+            try {
+                const audioCtx = new AudioContext();
+                const analyser = audioCtx.createAnalyser();
+                analyser.fftSize = 2048;
+                const audioSrc = audioCtx.createMediaStreamSource(audio);
+                audioSrc.connect(analyser);
+                const data = new Uint8Array(analyser.frequencyBinCount);
+
+
+                const intervalId = setInterval(()=>{
+                    analyser.getByteFrequencyData(data);
+                    let tmp = data.reduce(function add(sum, currValue) {
+                        
+                        return sum + currValue;
+                      }, 0)/100;
+                      console.log(tmp);
+                      setDecibelData(prev => prev > tmp ? prev - 0.1 : prev + 0.1);
+                  },20);
+                  return () => {
+                    clearInterval(intervalId);
+                  }
+            } catch(e) {
+                throw(500, e);
+            }
+        }
+        return () => stopMicrophone;
+    },[audio])
+
+
+    useEffect(()=>{
+        const checkNoise = ({decibelData}) => {
+            let tmpTime = new Date();
+            if(decibelData > 10 && tmpTime.getTime()/1000 - noisCheckedTime > 5){
+                setNoiseNumber(prev => prev + 1);
+                setNoiseCheckedTime(tmpTime.getTime()/1000);
+            }
+        };
+        checkNoise({decibelData});
+        
+    },[decibelData,setDecibelData])
+
     const expiryTimestamp = useMemo(()=> new Date(),[]);
     const [isFocused,setIsFocused] = useState({
         hour: false,
@@ -89,6 +169,8 @@ function TimerTemplate() {
     const [isStart,setIsStart] = useState(false);
     const [isPaused,setIsPaused] = useState(false);
     const [isAlarmStarted,setIsAlarmStarted] = useState(false);
+    const [noiseNumber,setNoiseNumber] = useState(0);
+
     expiryTimestamp.setSeconds(expiryTimestamp.getSeconds());
     const {
       seconds,
@@ -109,11 +191,11 @@ function TimerTemplate() {
         } 
     }});
 
-    const {onChange,setMinute,onFocus,onBlur,onReset,onStart,onPause} = timerApi({texts,expiryTimestamp,setIsFocused,hours,minutes,seconds,setTexts,isStart,firstTime,setFirstTime,isFocused,restart,pause,resume,isPaused,setIsPaused,setIsStart,audio,setIsAlarmStarted});
+    const {onChange,setMinute,onFocus,onBlur,onReset,onStart,onPause} = timerApi({texts,expiryTimestamp,setIsFocused,hours,minutes,seconds,setTexts,isStart,firstTime,setFirstTime,isFocused,restart,pause,resume,isPaused,setIsPaused,setIsStart,bell,setIsAlarmStarted});
     
-    if(!isPaused && hours == 0 && minutes == 0 &&  seconds < 4 && seconds != 0 && !isAlarmStarted && isStart){
-        audio.currentTime = 3 - seconds;
-        audio.play()
+    if(!isPaused && hours === 0 && minutes === 0 &&  seconds < 4 && seconds !== 0 && !isAlarmStarted && isStart){
+        bell.currentTime = 3 - seconds;
+        bell.play()
         setIsAlarmStarted(true);
     }
 
@@ -132,32 +214,23 @@ function TimerTemplate() {
         console.log(`top: ${top}px; left: ${left}px`);
     }
 
-    const StartBtn = styled(StartBtnStyle)`
-        // width: ${width * 0.45}px;
-        font-size: ${width * 0.04}px;
-        padding: ${width*0.015*0.6}px ${width * 0.015}px;
-        margin: ${width*0.02}px;
-        border-radius: ${width * 0.02}px;
-        `;
-    const MinuteBtn = styled(MinuteBtnStyle)`
-        padding: ${width*0.015*0.6}px ${width * 0.015}px;
-        margin: ${width*0.01}px;
-        font-size: ${width * 0.04}px;
 
-    `
+    
     return(
-        <TimerTemplateContainer ref={componentRef}>
-            <div className='btnWrapper'>
-                <MinuteBtn onClick={() => setMinute(60)}>1분</MinuteBtn>
-                <MinuteBtn onClick={() => setMinute(180)}>3분</MinuteBtn>
-                <MinuteBtn onClick={() => setMinute(300)}>5분</MinuteBtn>
-                <MinuteBtn onClick={() => setMinute(600)}>10분</MinuteBtn>
-                {/* <button onClick={() => console.log(expiryTimestamp)}>test</button> */}
+        <TimerTemplateContainer ref={componentRef} decibelData={decibelData} width={width}>
+            <div style={{width:width*0.95, display:'flex',justifyContent:'space-between', marginBottom: width * 0.01}}>
+                <div style={{display:'flex'}}>
+                    <img className="decibelBtn" src={decibelMeterIcon} alt='decibel meter' style={{width:width * 0.05,height:width * 0.05}} onClick={toggleMicrophone}></img>
+                    {/* <span className='decibelNum'>{isDecibelStarted ? Math.floor(decibelData) : null}</span> */}
+                    <div className='noiseNumberWrapper'>{isDecibelStarted ? <span>떠든횟수: {noiseNumber}</span> : null}</div>
+                </div>
+                <SettingIcon src={settingIcon} style={{width:width * 0.05,height:width * 0.05}}></SettingIcon>
             </div>
-            <div className='timeDisplayWrapper'>
-                <div className="timeDisplay" style={{width:width,height:height,fontSize:width * 0.22 + 'px',lineHeight: width * 0.2 + 'px'}}>
+
+            <TimeDisplayWrapper style={{width:width,height:height,fontSize:width * 0.22 + 'px',lineHeight: width * 0.2 + 'px'}}>
+                <TimeDisplay style={{fontSize:width * 0.15 + 'px'}} >
                     <input 
-                        style={{fontSize:width * 0.22 + 'px'}} 
+                        style={{fontSize:width * 0.15 + 'px'}} 
                         className={isStart ? 'caret' : null} 
                         type="number" 
                         name="hour" 
@@ -166,7 +239,7 @@ function TimerTemplate() {
                         onBlur={onBlur} 
                         onChange={onChange} />:
                     <input 
-                        style={{fontSize:width * 0.22 + 'px'}} 
+                        style={{fontSize:width * 0.15 + 'px'}} 
                         className={isStart ? 'caret' : null} 
                         type="number" 
                         name="minute" 
@@ -175,7 +248,7 @@ function TimerTemplate() {
                         onBlur={onBlur} 
                         onChange={onChange} />:
                     <input 
-                        style={{fontSize:width * 0.22 + 'px'}} 
+                        style={{fontSize:width * 0.15 + 'px'}} 
                         className={isStart ? 'caret' : null} 
                         type="number" 
                         name="second" 
@@ -183,12 +256,20 @@ function TimerTemplate() {
                         onFocus={onFocus} 
                         onBlur={onBlur} 
                         onChange={onChange} />
+                </TimeDisplay>
+
+            <div className='btnWrapper' style={{left: width * 0.08 + 'px', bottom: width * 0.05 + 'px'}}>
+                <MinuteBtn width={width} onClick={()=>setMinute(60)}>1</MinuteBtn>
+                <MinuteBtn width={width} onClick={()=>setMinute(180)}>3</MinuteBtn>
+                <MinuteBtn width={width} onClick={()=>setMinute(300)}>5</MinuteBtn>
+                <MinuteBtn width={width} onClick={()=>setMinute(600)}>10</MinuteBtn>
+             </div>
+                <div className='startBtnWrapper' style={{right: width * 0.02 + 'px', bottom: width * 0.035 + 'px'}}>
+                    {isStart ? <StartBtn onClick={onPause} width={width}>pause</StartBtn>  : <StartBtn onClick={onStart} width={width}>start</StartBtn> }
+                    <StartBtn onClick={onReset} width={width}>reset</StartBtn>
                 </div>
-                <div className='btnWrapperBelow'>
-                    {isStart ? <StartBtn onClick={onPause}>Pause</StartBtn>  : <StartBtn onClick={onStart}>start</StartBtn> }
-                    <StartBtn onClick={onReset}>reset</StartBtn>
-                </div>
-            </div>
+            </TimeDisplayWrapper>
+
         </TimerTemplateContainer>
     )
 }

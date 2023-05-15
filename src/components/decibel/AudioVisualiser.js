@@ -53,7 +53,15 @@ const SpaceDiv = styled.div`
     height: 150px;
     display: block;
 `
+const TestDiv = styled.div`
+    background-color:  ${props => props.color > 40 ? "red" : props.color > 30 ? "orange" :  props.color > 20? "yellow" : "green"};
+    transition: all 1.5s ease;
+    WebkitTransition: all 1.5s ease;
+    MozTransition: all 1.5s ease;
+    width: 300px;
+    height: 300px;
 
+`
 const settings = {
     bars: 3000,
     spacing: 6,
@@ -66,7 +74,7 @@ const AudioVisualiser = ({audioData}) => {
     const [alert,setAlert] = useState(0);
     const sensitivity = useRef(0);
     const prevTime = useRef(true);
-    const [test,setTest] = useState(0);
+    const [audioDataTest,setAudioDataTest] = useState();
     const canvasRef = useRef(null);
     const [audio,setAudio] = useState(null);
     // 오디오 미디어 스트림 가져오고 스테이트에 저장
@@ -91,7 +99,7 @@ const AudioVisualiser = ({audioData}) => {
     }
     const [src,setSrc] = useState(happy);
     const testRef = useRef(1);
-
+    const [color,setColor] = useState(false);
 
     useEffect(()=>{
         if(audio){
@@ -102,14 +110,16 @@ const AudioVisualiser = ({audioData}) => {
                 const audioSrc = audioCtx.createMediaStreamSource(audio);
                 audioSrc.connect(analyser);
                 const data = new Uint8Array(analyser.frequencyBinCount);
-                
+                setAudioDataTest(data);
 
                 const ctx = canvasRef.current.getContext('2d');
 
                 canvasRef.current.width = 500;
                 canvasRef.current.height = 300;
                 
-
+                console.log(data.reduce(function add(sum, currValue) {
+                    return sum + currValue;
+                  }, 0))
                 const cw = canvasRef.current.width / 2;
                 const ch = canvasRef.current.height / 2;
 
@@ -193,7 +203,10 @@ const AudioVisualiser = ({audioData}) => {
                 };
                 const intervalId = setInterval(()=>{
                     analyser.getByteFrequencyData(data);
-                    console.log(data);
+                    let tmp = data.reduce(function add(sum, currValue) {
+                        return sum + currValue;
+                      }, 0)/1000;
+                    setColor(tmp);
                     draw(data);
                   },10);
                   return () => {
@@ -236,7 +249,8 @@ const AudioVisualiser = ({audioData}) => {
                     </div>
                 </div>
             </div>
-            
+            <TestDiv color={color}>{color}</TestDiv>
+
         </DecibelTemplateContainer>
     )
 }
