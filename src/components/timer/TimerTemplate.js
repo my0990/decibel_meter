@@ -11,13 +11,14 @@ import TimeDisplayWrapper from '../commons/TimeDisplayWrapper';
 import TimeDisplay from '../commons/TimeDisplay';
 import decibelMeterIcon from '../../imgs/measure.png';
 import settingIcon from '../../imgs/setting.png';
+import ModalBasic from '../Modal/ModalBasic';
 const TimerTemplateContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items:center;
     overflow: hidden;
-    background-color:  ${props => props.isDecibelStarted ? "red" : props.decibelData > 30 ? "orange" :  props.decibelData > 20? "yellow" : "#6FD1B5"};
+    background-color:  ${props => props.isDecibelStarted ? "red" : props.decibelData > 30 ? "red" :  props.decibelData > 20? "yellow" : "#6FD1B5"};
     transition: all 1.5s ease;
     WebkitTransition: all 1.5s ease;
     MozTransition: all 1.5s ease;
@@ -67,19 +68,33 @@ const TimerTemplateContainer = styled.div`
     }
 `
 const SettingIcon = styled.img`
-    width: 72px;
-    height: 72px;
+    // width: 72px;
+    // height: 72px;
     cursor: pointer;
     opacity: 0.5;
     &:hover {
         opacity: 1;
         scale: 1.1;
+        transform: rotate(45deg);
         transition: all 0.1s ease;
         WebkitTransition: all 0.1s ease;
         MozTransition: all 0.1s ease;
+
     }
 `
+const ModalLayer = styled.div`
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    z-index: 100;
+    opacity: ${props => props.modalOpen ? 0.5 : 0};
+    visibility: ${props => props.modalOpen ? 'visible' : 'hidden'};
+    transition: all 0.5s;
+    background: black;
 
+`
 
 const bell = new Audio(audioSrc);
 function TimerTemplate() {
@@ -87,6 +102,10 @@ function TimerTemplate() {
     const [decibelData,setDecibelData] = useState(0);
     const [isDecibelStarted,setIsDecibelStarted] = useState(false);
     const [noisCheckedTime,setNoiseCheckedTime] = useState(0);
+    const [tmpDecibelData,setTmpDecibelData] = useState(0);
+    const [modalOpen,setModalOpen] = useState(false);
+
+
     const getMicrophone = async () => {
         const audio = await navigator.mediaDevices.getUserMedia({
             audio: true,
@@ -129,6 +148,7 @@ function TimerTemplate() {
                         return sum + currValue;
                       }, 0)/100;
                       console.log(tmp);
+                      setTmpDecibelData(tmp);
                       setDecibelData(prev => prev > tmp ? prev - 0.1 : prev + 0.1);
                   },20);
                   return () => {
@@ -217,14 +237,16 @@ function TimerTemplate() {
 
     
     return(
-        <TimerTemplateContainer ref={componentRef} decibelData={decibelData} width={width}>
+        <TimerTemplateContainer ref={componentRef} decibelData={decibelData} width={width} modalOpen={modalOpen}>
+            <ModalLayer modalOpen={modalOpen}/>
+            <ModalBasic modalOpen={modalOpen} setModalOpen={setModalOpen} decibelData={tmpDecibelData}/>
             <div style={{width:width*0.95, display:'flex',justifyContent:'space-between', marginBottom: width * 0.01}}>
                 <div style={{display:'flex'}}>
                     <img className="decibelBtn" src={decibelMeterIcon} alt='decibel meter' style={{width:width * 0.05,height:width * 0.05}} onClick={toggleMicrophone}></img>
                     {/* <span className='decibelNum'>{isDecibelStarted ? Math.floor(decibelData) : null}</span> */}
                     <div className='noiseNumberWrapper'>{isDecibelStarted ? <span>떠든횟수: {noiseNumber}</span> : null}</div>
                 </div>
-                <SettingIcon src={settingIcon} style={{width:width * 0.05,height:width * 0.05}}></SettingIcon>
+                <SettingIcon src={settingIcon} style={{width:width * 0.05,height:width * 0.05}} onClick={()=>setModalOpen(true)}></SettingIcon>
             </div>
 
             <TimeDisplayWrapper style={{width:width,height:height,fontSize:width * 0.22 + 'px',lineHeight: width * 0.2 + 'px'}}>
