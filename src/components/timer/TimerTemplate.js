@@ -11,6 +11,7 @@ import TimeDisplayWrapper from '../commons/TimeDisplayWrapper';
 import TimeDisplay from '../commons/TimeDisplay';
 import decibelMeterIcon from '../../imgs/measure.png';
 import settingIcon from '../../imgs/setting.png';
+import ModalBasic from '../Modals/ModalBasic';
 const TimerTemplateContainer = styled.div`
     display: flex;
     flex-direction: column;
@@ -87,13 +88,16 @@ function TimerTemplate() {
     const [decibelData,setDecibelData] = useState(0);
     const [isDecibelStarted,setIsDecibelStarted] = useState(false);
     const [noisCheckedTime,setNoiseCheckedTime] = useState(0);
+    const [modalOpen,setModalOpen] = useState(false);
+
+
+
     const getMicrophone = async () => {
         const audio = await navigator.mediaDevices.getUserMedia({
             audio: true,
             video: false
         });
         setAudio(audio);
-
     }
     const stopMicrophone = () => {
         audio.getTracks().forEach(track => track.stop());
@@ -218,13 +222,14 @@ function TimerTemplate() {
     
     return(
         <TimerTemplateContainer ref={componentRef} decibelData={decibelData} width={width}>
+            <ModalBasic setModalOpen={setModalOpen}modalOpen={modalOpen}/>
             <div style={{width:width*0.95, display:'flex',justifyContent:'space-between', marginBottom: width * 0.01}}>
                 <div style={{display:'flex'}}>
                     <img className="decibelBtn" src={decibelMeterIcon} alt='decibel meter' style={{width:width * 0.05,height:width * 0.05}} onClick={toggleMicrophone}></img>
                     {/* <span className='decibelNum'>{isDecibelStarted ? Math.floor(decibelData) : null}</span> */}
                     <div className='noiseNumberWrapper'>{isDecibelStarted ? <span>떠든횟수: {noiseNumber}</span> : null}</div>
                 </div>
-                <SettingIcon src={settingIcon} style={{width:width * 0.05,height:width * 0.05}}></SettingIcon>
+                <SettingIcon src={settingIcon} style={{width:width * 0.05,height:width * 0.05}} onClick={()=>setModalOpen(true)}></SettingIcon>
             </div>
 
             <TimeDisplayWrapper style={{width:width,height:height,fontSize:width * 0.22 + 'px',lineHeight: width * 0.2 + 'px'}}>
