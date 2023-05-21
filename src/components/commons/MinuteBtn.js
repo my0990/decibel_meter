@@ -4,15 +4,15 @@ import React from "react";
 const MinuteBtnStyle = styled.button`
     border: none;
     border-radius: 5px;
-    background-color: #C0DBEA;
+    background-color: ${(props) => props.theme.minuteBtn};
     font-family: Major Mono Display;
-    color: #363636;
-    font-weight: bold;
+    color: ${(props) => props.theme.minuteBtnColor};
+    font-weight: 500;
     cursor: pointer;
     margin-right: ${(props) => props.width*0.019}px;
-    font-size: ${(props) => props.width * 0.02}px;
-    width: ${(props) => props.width * 0.057}px;
-    height: ${(props) => props.width * 0.049}px;
+    font-size: ${(props) => props.width * 0.03}px;
+    width: ${(props) => props.width * 0.08}px;
+    height: ${(props) => props.width * 0.06}px;
     &:hover {
     box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
     transform: translate3d(0, -2px, 0);
