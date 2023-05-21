@@ -12,6 +12,7 @@ export default () => {
       display: flex;
       align-items: center;
       justify-content: center;
+
       div{
         width: 100%;
       }
