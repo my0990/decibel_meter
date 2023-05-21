@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { useRef, useEffect } from "react";
-
+import {colorThemeList} from "./colorThemeList";
 const ModalBasicBlock = styled.div`
     /* 모달창 크기 */
     width: 500px;
@@ -40,8 +40,11 @@ const ModalBasicBlock = styled.div`
             }
         }                                    
     }
+
+    .marginTop {
+        margin-top: 30px;
+    }
     .noiseSensitivityWrapper {
-        margin-top: 50px;
         .noiseSensitivityDisplay {
             padding: 20px;
             display: flex;
@@ -59,13 +62,18 @@ const ModalBasicBlock = styled.div`
             }
             .slider {
                 width: 300px;
+                cursor: pointer;
             }
         }
+    }
+    .colorThemeWrapper {
+        display: flex;
+        justify-content: space-between;
     }
 
 `
 
-const ModalBasic = ({modalOpen,setModalOpen, decibelData, setSensitivity, sensitivity, sensitivityRef}) => {
+const ModalBasic = ({modalOpen,setModalOpen, decibelData, setSensitivity, sensitivity, sensitivityRef, setTheme}) => {
     const modalRef = useRef(null);
     
     useEffect(() => {
@@ -92,6 +100,22 @@ const ModalBasic = ({modalOpen,setModalOpen, decibelData, setSensitivity, sensit
         setSensitivity(e.target.value);
         localStorage.setItem('sensitivity', e.target.value)
     }
+
+    const themeChange = (e) => {
+        if(e.target.value === "iron man"){
+            setTheme(colorThemeList.ironman);
+            localStorage.setItem('colorTheme','iron man');
+        } else if(e.target.value === "black and white"){
+            setTheme(colorThemeList.blackandwhite);
+            localStorage.setItem('colorTheme','black and white');
+        } else {
+            setTheme(colorThemeList.vintage);
+            localStorage.setItem('colorTheme','vintage')
+        }
+        console.log(e.target.value);
+        console.log(colorThemeList.ironman);
+        
+    }
     return(
         <ModalBasicBlock modalOpen={modalOpen} ref={modalRef}>
             <div className="header">
@@ -100,12 +124,20 @@ const ModalBasic = ({modalOpen,setModalOpen, decibelData, setSensitivity, sensit
                 </div>
                 <button className="closeBtn" onClick={()=>setModalOpen(false)}>x</button>
             </div>
-            <div className="noiseSensitivityWrapper">
+            <div className="noiseSensitivityWrapper marginTop">
                 <div>sensitivity</div>
                 <div className="noiseSensitivityDisplay">
                     <div className="display">{Math.floor(decibelData)}</div>
                     <input className="slider" type="range" value={sensitivity} onChange={onChange} min={1} max={100} step={0.1} ref={sensitivityRef}></input>
                 </div>
+            </div>
+            <div className="colorThemeWrapper marginTop">
+                <div>color theme</div>
+                <select name="time" onChange={themeChange}>
+                    <option value="vintage" >vintage</option>
+                    <option value="iron man">iron man</option>
+                    <option value="black and white">black and white</option>
+                </select>
             </div>
 
         </ModalBasicBlock>

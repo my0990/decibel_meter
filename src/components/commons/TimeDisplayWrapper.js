@@ -2,7 +2,7 @@ import styled from "styled-components";
 
 
 const TimerDisplayWrapperBlock = styled.div`
-    background: #EEEAD1;
+    background-color: ${(props) => props.theme.displayBackground};
     border-radius: 10px;
     padding: 2%;
     // position: absolute;

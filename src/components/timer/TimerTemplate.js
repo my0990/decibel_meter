@@ -12,20 +12,21 @@ import TimeDisplay from '../commons/TimeDisplay';
 import decibelMeterIcon from '../../imgs/measure.png';
 import settingIcon from '../../imgs/setting.png';
 import ModalBasic from '../Modal/ModalBasic';
+import { colorThemeList } from '../Modal/colorThemeList';
 const TimerTemplateContainer = styled.div`
     display: flex;
     flex-direction: column;
     justify-content: center;
     align-items:center;
     overflow: hidden;
-    background-color:  ${props => !props.isDecibelStarted ? "#6FD1B5" : props.decibelData > 100 ? "red" :  props.decibelData > 80? "#cc3300" : props.decibelData > 60 ? '#ff9966' : props.decibelData > 40 ? '#ffcc00' : '#99cc33'};
+    background-color:  ${props => !props.isDecibelStarted ? props.theme.containerBackground : props.decibelData > 100 ? "red" :  props.decibelData > 80? "#cc3300" : props.decibelData > 60 ? '#ff9966' : props.decibelData > 40 ? '#ffcc00' : '#99cc33'};
     transition: all 1.5s ease;
     WebkitTransition: all 1.5s ease;
     MozTransition: all 1.5s ease;
     position: relative;
     .decibelNum{
         font-family: Major Mono Display;
-        color: #E97777;
+        background-color: ${(props) => props.theme.fontColor};
         font-size: ${props => props.width * 0.05 + 'px'};
         margin-left: ${props => props.width * 0.02 + 'px'};
         vertical-align: top;
@@ -113,6 +114,17 @@ function TimerTemplate() {
     const [modalOpen,setModalOpen] = useState(false);
     const [sensitivity,setSensitivity] = useState(1);
     const sensitivityRef = useRef();
+    const [theme,setTheme] = useState({
+        "startBtn": "#BA90C6",
+        "minuteBtn": "#C0DBEA",
+        "containerBackground": "#6FD1B5",
+        "timerBackground": "#472C4B",
+        "fontColor": "#FDB800",
+        "displayBackground": "#EEEAD1",
+        "startBtnColor" : "#ffffff",
+        "minuteBtnColor" : "#000000",
+    });
+
     const getMicrophone = async () => {
         const audio = await navigator.mediaDevices.getUserMedia({
             audio: true,
@@ -185,8 +197,18 @@ function TimerTemplate() {
 
     useEffect(()=>{
         let tmp = localStorage.getItem('sensitivity');
+        let tmp2 = localStorage.getItem('colorTheme');
         if(tmp){
             setSensitivity(tmp);
+        }
+        if(tmp2){
+            if(tmp2 === "iron man"){
+                setTheme(colorThemeList.ironman);
+            } else if(tmp2 === "black and white"){
+                setTheme(colorThemeList.blackandwhite);
+            } else {
+                setTheme(colorThemeList.vintage);
+            }
         }
     })
     const expiryTimestamp = useMemo(()=> new Date(),[]);
@@ -252,9 +274,9 @@ function TimerTemplate() {
 
     
     return(
-        <TimerTemplateContainer ref={componentRef} decibelData={decibelData} width={width} modalOpen={modalOpen} isDecibelStarted={isDecibelStarted}>
+        <TimerTemplateContainer ref={componentRef} decibelData={decibelData} width={width} modalOpen={modalOpen} isDecibelStarted={isDecibelStarted} theme={theme}>
             <ModalLayer modalOpen={modalOpen}/>
-            <ModalBasic modalOpen={modalOpen} setModalOpen={setModalOpen} decibelData={tmpDecibelData} setSensitivity={setSensitivity} sensitivity={sensitivity} sensitivityRef={sensitivityRef}/>
+            <ModalBasic modalOpen={modalOpen} setTheme={setTheme} setModalOpen={setModalOpen} decibelData={tmpDecibelData} setSensitivity={setSensitivity} sensitivity={sensitivity} sensitivityRef={sensitivityRef}/>
             <div style={{width:width*0.95, display:'flex',justifyContent:'space-between', marginBottom: width * 0.01}}>
                 <div style={{display:'flex'}}>
                     <img className="decibelBtn" src={decibelMeterIcon} alt='decibel meter' style={{width:width * 0.05,height:width * 0.05}} onClick={toggleMicrophone}></img>
@@ -264,8 +286,8 @@ function TimerTemplate() {
                 <SettingIcon src={settingIcon} style={{width:width * 0.05,height:width * 0.05}} onClick={()=>setModalOpen(true)}></SettingIcon>
             </div>
 
-            <TimeDisplayWrapper style={{width:width,height:height,fontSize:width * 0.22 + 'px',lineHeight: width * 0.2 + 'px'}}>
-                <TimeDisplay style={{fontSize:width * 0.15 + 'px'}} >
+            <TimeDisplayWrapper style={{width:width,height:height,fontSize:width * 0.22 + 'px',lineHeight: width * 0.2 + 'px'}} theme={theme}>
+                <TimeDisplay style={{fontSize:width * 0.15 + 'px'}} theme={theme}>
                     <input 
                         style={{fontSize:width * 0.15 + 'px'}} 
                         className={isStart ? 'caret' : null} 
@@ -295,15 +317,15 @@ function TimerTemplate() {
                         onChange={onChange} />
                 </TimeDisplay>
 
-            <div className='btnWrapper' style={{left: width * 0.08 + 'px', bottom: width * 0.05 + 'px'}}>
-                <MinuteBtn width={width} onClick={()=>setMinute(60)}>1</MinuteBtn>
-                <MinuteBtn width={width} onClick={()=>setMinute(180)}>3</MinuteBtn>
-                <MinuteBtn width={width} onClick={()=>setMinute(300)}>5</MinuteBtn>
-                <MinuteBtn width={width} onClick={()=>setMinute(600)}>10</MinuteBtn>
+            <div className='btnWrapper' style={{left: width * 0.06 + 'px', bottom: width * 0.045+ 'px'}}>
+                <MinuteBtn width={width} theme={theme} onClick={()=>setMinute(60)}>1</MinuteBtn>
+                <MinuteBtn width={width} theme={theme} onClick={()=>setMinute(180)}>3</MinuteBtn>
+                <MinuteBtn width={width} theme={theme} onClick={()=>setMinute(300)}>5</MinuteBtn>
+                <MinuteBtn width={width} theme={theme} onClick={()=>setMinute(600)}>10</MinuteBtn>
              </div>
-                <div className='startBtnWrapper' style={{right: width * 0.02 + 'px', bottom: width * 0.035 + 'px'}}>
-                    {isStart ? <StartBtn onClick={onPause} width={width}>pause</StartBtn>  : <StartBtn onClick={onStart} width={width}>start</StartBtn> }
-                    <StartBtn onClick={onReset} width={width}>reset</StartBtn>
+                <div className='startBtnWrapper' style={{right: width * 0.015 + 'px', bottom: width * 0.035 + 'px'}}>
+                    {isStart ? <StartBtn onClick={onPause} width={width} theme={theme}>pause</StartBtn>  : <StartBtn onClick={onStart} width={width} theme={theme}>start</StartBtn> }
+                    <StartBtn onClick={onReset} width={width} theme={theme}>reset</StartBtn>
                 </div>
             </TimeDisplayWrapper>
 
