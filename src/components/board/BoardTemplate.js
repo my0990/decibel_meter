@@ -17,8 +17,8 @@ export default () => {
         width: 100%;
       }
       & .tox-edit-area__iframe{
-        background-color: black !important;
-        border: 10px dashed #ffffff !important; 
+        background-color: #497959 !important;
+        border: 10px solid #B78240 !important;
       }
       & .tox-tinymce{
         border: none !important;
@@ -40,6 +40,7 @@ export default () => {
          onInit={(evt, editor) => editorRef.current = editor}
          apiKey='qw9yikdbp0cjvowgr7fuv36c39o7939ou4d6a818gsi9pj4s'
          init={{
+           font_size_formats: '18pt 24pt 36pt 48pt 60pt 72pt',
            statusbar: false,
            height: '100%',
            menubar: false,
@@ -68,8 +69,8 @@ export default () => {
         ],
            quickbars_insert_toolbar: false,
            toolbar: false,
-           quickbars_selection_toolbar: 'forecolor backcolor|| h1 h2 h3 h4 h5 h6 || alignjustify alignleft aligncenter alignright  ||  strikethrough underline redo undo',
-           content_style: "body { margin: 1rem; font-family:Helvetica,Arial,sans-serif;background-color:#DBE4C6;color: #678673; font-size: 3.5rem;}.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {color: white;opacity: 0.4;} h1,h2,h3,h4,h5,h6,p{margin:0} .mce-content-body ol{margin:0 3rem;};"
+           quickbars_selection_toolbar: 'forecolor backcolor|| fontsize || alignjustify alignleft aligncenter alignright  ||  strikethrough underline redo undo',
+           content_style: "body { margin: 1rem; font-family:Helvetica,Arial,sans-serif;background-color:#497959;color: white; font-size: 3.5rem;}.mce-content-body[data-mce-placeholder]:not(.mce-visualblocks)::before {color: white; opacity: 0.4;} h1,h2,h3,h4,h5,h6,p{margin:0} .mce-content-body ol{margin:0 3rem;};"
            ,
            placeholder: '내용을 적어주세요',
            automatic_uploads: true,
