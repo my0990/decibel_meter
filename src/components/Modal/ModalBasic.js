@@ -69,6 +69,9 @@ const ModalBasicBlock = styled.div`
     .colorThemeWrapper {
         display: flex;
         justify-content: space-between;
+        select {
+            margin-right: 30px;
+        }
     }
 
 `
@@ -120,23 +123,25 @@ const ModalBasic = ({modalOpen,setModalOpen, decibelData, setSensitivity, sensit
         <ModalBasicBlock modalOpen={modalOpen} ref={modalRef}>
             <div className="header">
                 <div>
-                    settings
+                    설정
                 </div>
                 <button className="closeBtn" onClick={()=>setModalOpen(false)}>x</button>
             </div>
             <div className="noiseSensitivityWrapper marginTop">
-                <div>sensitivity</div>
+                <div>소음민감도</div>
                 <div className="noiseSensitivityDisplay">
                     <div className="display">{Math.floor(decibelData)}</div>
                     <input className="slider" type="range" value={sensitivity} onChange={onChange} min={1} max={100} step={0.1} ref={sensitivityRef}></input>
                 </div>
+                <div style={{fontSize:'0.8rem', color: 'gray'}}> 소음 수치가 커질수록 배경색이 변합니다.(초록-노랑-주황-빨강)</div> 
+                <div style={{fontSize:'0.8rem', color: 'gray'}}> 소음수치가 100이 넘어가면 떠든 횟수가 1씩 늘어납니다.</div>
             </div>
             <div className="colorThemeWrapper marginTop">
-                <div>color theme</div>
+                <div>색상 테마</div>
                 <select name="time" onChange={themeChange}>
-                    <option value="vintage" >vintage</option>
-                    <option value="iron man">iron man</option>
-                    <option value="black and white">black and white</option>
+                    <option value="vintage" >빈티지</option>
+                    <option value="iron man">아이언 맨</option>
+                    <option value="black and white">블랙 앤 화이트</option>
                 </select>
             </div>
 

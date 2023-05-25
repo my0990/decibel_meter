@@ -12,12 +12,12 @@ export const  colorThemeList = {
     'ironman':     {
         "startBtn": "#6A0C0B",
         "minuteBtn": "#6A0C0B",
-        "containerBackground": "#67C7EB",
+        "containerBackground": "#b97d10",
         "timerBackground": "#FBCA03",
         "fontColor": "#6A0C0B",
         "displayBackground": "#AA0505",
         "startBtnColor" : "#FBCA03",
-        "minuteBtnColor" : "#ffffff",
+        "minuteBtnColor" : "#FBCA03",
     },
     'blackandwhite': {
         "startBtn": "#ffffff",

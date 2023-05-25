@@ -168,9 +168,9 @@ function TimerTemplate() {
                         
                         return sum + currValue;
                       }, 0)/10000 * sensitivityRef.current.value;
-                      console.log(tmp);
+                    //   console.log(tmp);
                       setTmpDecibelData(tmp);
-                      setDecibelData(prev => prev > tmp ? prev - 0.1 : prev + 0.1);
+                      setDecibelData(prev => prev > tmp || prev > 110 ? prev - (prev-tmp)/100 : prev + (tmp-prev)/100);
                   },20);
                   return () => {
                     clearInterval(intervalId);
@@ -186,6 +186,7 @@ function TimerTemplate() {
     useEffect(()=>{
         const checkNoise = ({decibelData}) => {
             let tmpTime = new Date();
+            console.log(decibelData);
             if(decibelData > 100 && tmpTime.getTime()/1000 - noisCheckedTime > 5){
                 setNoiseNumber(prev => prev + 1);
                 setNoiseCheckedTime(tmpTime.getTime()/1000);
