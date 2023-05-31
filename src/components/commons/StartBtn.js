@@ -3,10 +3,10 @@ import styled from'styled-components';
 
 const StartBtnStyle = styled.button`
     appearance: none;
-    background-color: #BA90C6;
+    background-color: ${(props) => props.theme.startBtn};
     font-family: Major Mono Display;
     box-sizing: border-box;
-    color: #FFFFFF;
+    color: ${(props) => props.theme.startBtnColor};
     cursor: pointer;
     display: inline-block;
     border: none;
@@ -20,7 +20,7 @@ const StartBtnStyle = styled.button`
     -webkit-user-select: none;
     touch-action: manipulation;
     will-change: transform;
-
+    font-weight: 500;
     margin-right: ${(props) => props.width*0.035}px;
     font-size: ${(props) => props.width * 0.04}px;
     width: ${(props) => props.width * 0.195}px;

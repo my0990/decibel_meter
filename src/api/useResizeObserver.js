@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useCallback } from "react";
 
 
-const ratio = 0.8
+const ratio = 0.9
 
 
 function useResizeObserver(ref, callback, isResize) {
@@ -36,7 +36,7 @@ function useResizeObserver(ref, callback, isResize) {
           setWidth(height * 2.3 * ratio);
           setHeight(height * ratio);
         } else {
-          setHeight((width * 0.43) * ratio);
+          setHeight((width * 0.43) * ratio); 
           setWidth(width * ratio);
         }
       }

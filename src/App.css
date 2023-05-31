@@ -24,4 +24,7 @@ h1{
 
 body{
     /* overflow: hidden; */
+    /* cursor: url(../src/components/board/cursor.cur),url(../src/components/board/cursor.cur),auto; */
 }
+
+
