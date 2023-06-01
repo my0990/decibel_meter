@@ -34,15 +34,15 @@ const TimerTemplateContainer = styled.div`
     }
     .noiseNumberWrapper{
         font-family: Major Mono Display;
-        font-size: ${props => props.width * 0.025 + 'px'};
+        font-size: ${props => props.width * 0.035 + 'px'};
         margin-left: ${props => props.width * 0.025 + 'px'};
         
         align-items: center;
         display: flex;
         span {
             cursor: pointer;
-            font-size: 2.1rem;
-            font-weight: bold;
+
+            font-weight: 600;
             font-family: Gill Sans Extrabold, sans-serif;
             &: hover {
                 scale: 1.1;
