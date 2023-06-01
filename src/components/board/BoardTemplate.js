@@ -92,7 +92,6 @@ export default () => {
                 let file = (input)?.files[0];
                 let reader = new FileReader();
                 reader.onload = function (e) {
-                  console.log("name", (e.target).result);
                   callback((e.target).result, {
                     alt: file.name,
                   });

@@ -41,6 +41,9 @@ const TimerTemplateContainer = styled.div`
         display: flex;
         span {
             cursor: pointer;
+            font-size: 2.1rem;
+            font-weight: bold;
+            font-family: Gill Sans Extrabold, sans-serif;
             &: hover {
                 scale: 1.1;
             }
@@ -136,7 +139,7 @@ function TimerTemplate() {
     const stopMicrophone = () => {
         audio.getTracks().forEach(track => track.stop());
         setAudio(null);
-        console.log(audio);
+
     }
     
     const toggleMicrophone = () => {
@@ -150,7 +153,7 @@ function TimerTemplate() {
     }
     const onNoiseReset = () => {
         setNoiseNumber(0);
-        console.log('test');
+
     }
     useEffect(()=>{
         if(audio){
@@ -187,7 +190,6 @@ function TimerTemplate() {
     useEffect(()=>{
         const checkNoise = ({decibelData}) => {
             let tmpTime = new Date();
-            console.log(decibelData);
             if(decibelData > 100 && tmpTime.getTime()/1000 - noisCheckedTime > 5){
                 setNoiseNumber(prev => prev + 1);
                 setNoiseCheckedTime(tmpTime.getTime()/1000);
@@ -272,8 +274,7 @@ function TimerTemplate() {
 
     function printResize(width,height) {
         // console.log(entry.target);
-        console.log(`width: ${width}px; height: ${height}px`);
-        console.log(`top: ${top}px; left: ${left}px`);
+
     }
 
 
@@ -286,7 +287,7 @@ function TimerTemplate() {
                 <div style={{display:'flex'}}>
                     <img className="decibelBtn" src={decibelMeterIcon} alt='decibel meter' style={{width:width * 0.05,height:width * 0.05}} onClick={toggleMicrophone}></img>
                     {/* <span className='decibelNum'>{isDecibelStarted ? Math.floor(decibelData) : null}</span> */}
-                    <div className='noiseNumberWrapper'>{isDecibelStarted ? <span onClick={onNoiseReset} title="클릭하여 초기화">떠든횟수: {noiseNumber}</span> : null}</div>
+                    <div className='noiseNumberWrapper'>{isDecibelStarted ? <span onClick={onNoiseReset} title="클릭하여 초기화">떠든횟수: &nbsp;{noiseNumber}</span> : null}</div>
                 </div>
                 <SettingIcon src={settingIcon} style={{width:width * 0.05,height:width * 0.05}} onClick={()=>setModalOpen(true)}></SettingIcon>
             </div>

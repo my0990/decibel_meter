@@ -20,7 +20,7 @@ const StartBtnStyle = styled.button`
     -webkit-user-select: none;
     touch-action: manipulation;
     will-change: transform;
-    font-weight: 500;
+    font-weight: 600;
     margin-right: ${(props) => props.width*0.035}px;
     font-size: ${(props) => props.width * 0.04}px;
     width: ${(props) => props.width * 0.195}px;

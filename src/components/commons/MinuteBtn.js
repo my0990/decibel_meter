@@ -7,7 +7,7 @@ const MinuteBtnStyle = styled.button`
     background-color: ${(props) => props.theme.minuteBtn};
     font-family: Major Mono Display;
     color: ${(props) => props.theme.minuteBtnColor};
-    font-weight: 500;
+    font-weight: 600;
     cursor: pointer;
     margin-right: ${(props) => props.width*0.019}px;
     font-size: ${(props) => props.width * 0.03}px;

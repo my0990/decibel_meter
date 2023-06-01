@@ -119,8 +119,7 @@ const ModalBasic = ({modalOpen,setModalOpen, decibelData, setSensitivity, sensit
             localStorage.setItem('colorTheme','vintage')
             setThemeValue('vintage');
         }
-        console.log(e.target.value);
-        console.log(colorThemeList.ironman);
+
         
     }
     return(
