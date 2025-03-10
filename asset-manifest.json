@@ -1,20 +1,21 @@
 {
   "files": {
-    "main.css": "/decibel_meter/static/css/main.5a989fcd.css",
-    "main.js": "/decibel_meter/static/js/main.c145fa97.js",
-    "static/js/651.5bd6727b.chunk.js": "/decibel_meter/static/js/651.5bd6727b.chunk.js",
-    "static/media/bell.wav": "/decibel_meter/static/media/bell.a530b6bd0bf216fb82c7.wav",
+    "main.css": "/decibel_meter/static/css/main.28969113.css",
+    "main.js": "/decibel_meter/static/js/main.ea931f96.js",
+    "static/js/845.02f1fd36.chunk.js": "/decibel_meter/static/js/845.02f1fd36.chunk.js",
     "static/media/beef.mp3": "/decibel_meter/static/media/beef.b459f9647e80a6861f93.mp3",
+    "static/media/chicken.mp3": "/decibel_meter/static/media/chicken.78f0bbbfbd97d07e2c0e.mp3",
     "static/media/measure.png": "/decibel_meter/static/media/measure.fa8ef56f976938e4edaf.png",
     "static/media/setting.png": "/decibel_meter/static/media/setting.f6d6e350dbc6a0aa0432.png",
-    "static/media/cursor.cur": "/decibel_meter/static/media/cursor.38f146bbb0ee1fd58b46.cur",
+    "static/media/alert.mp3": "/decibel_meter/static/media/alert.d24f84b0c398117970a3.mp3",
     "index.html": "/decibel_meter/index.html",
-    "main.5a989fcd.css.map": "/decibel_meter/static/css/main.5a989fcd.css.map",
-    "main.c145fa97.js.map": "/decibel_meter/static/js/main.c145fa97.js.map",
-    "651.5bd6727b.chunk.js.map": "/decibel_meter/static/js/651.5bd6727b.chunk.js.map"
+    "static/media/cursor.svg": "/decibel_meter/static/media/cursor.e69aea8a81b865089b105c3f6dd65687.svg",
+    "main.28969113.css.map": "/decibel_meter/static/css/main.28969113.css.map",
+    "main.ea931f96.js.map": "/decibel_meter/static/js/main.ea931f96.js.map",
+    "845.02f1fd36.chunk.js.map": "/decibel_meter/static/js/845.02f1fd36.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5a989fcd.css",
-    "static/js/main.c145fa97.js"
+    "static/css/main.28969113.css",
+    "static/js/main.ea931f96.js"
   ]
 }
