@@ -1,100 +1,125 @@
-import React, {useEffect, useState} from 'react'
+import React, {useMemo} from 'react'
 import styled from "styled-components";
-import expandIcon from "../../imgs/expand.png";
-import exitIcon from "../../imgs/fullscreen.png";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import { faPlus,faMinus } from '@fortawesome/free-solid-svg-icons';
+import ReactQuill, { Quill } from 'react-quill';
+import 'react-quill/dist/quill.snow.css';
+import cursor from './cursor.svg';
 
-const BoardTemplateContainer = styled.div`
-    background-color: gray;
-    display: flex;
-    flex-direction: column;
-    justify-content: center;
-    position: relative;
-    overflow: hidden;
-    .btnWrapper {
-        
-        position: absolute;
-        right: 30px;
-        bottom: 50px;
 
-        button {
-            opacity: 0.5;
-            width: 30px;
-            height: 30px;
-            margin: 5px;
-            cursor: pointer;
-            &:hover{
-                opacity: 1;
-            }
-        }
-    }
-    .board{
-        margin: 10px;
-        padding: 10px;
-        height: 90%;
-        font-size: 40px;
-        color: white;
-        background-color: #497959;
-        border-radius: 10px;
-        border: #B78240 solid 10px;
-    }
-    h1 {
-        text-align: center;
-    }
+// eslint-disable-next-line import/no-anonymous-default-export
+export default () => {
 
-    .expand {
+  const modules = useMemo(() => {
+    return {
+      toolbar: {
+        container: [
+          [{ size: [ 'huge', 'large',false, 'small'] }],
+          [{ align: [] }],
+          ['bold', 'italic', 'underline', 'strike'],
+          [{ list: 'ordered' }, { list: 'bullet' }],
+          [
+            {
+              color: [],
+            },
+            { background: [] },
+          ],
+        ],
+      },
+    };
+  }, []);
+  const formats = [
+    'font',
+    'header',
+    'bold',
+    'italic',
+    'underline',
+    'strike',
+    'blockquote',
+    'list',
+    'bullet',
+    'indent',
+    'link',
+    'align',
+    'color',
+    'background',
+    'size',
+    'h1',
+  ];
+    const Container = styled.div`
+
+
+
+      
+      display: flex;
+      justify-content: center;
+      overflow:hidden;
+      position: relative;
+    .ql-toolbar.ql-snow {
+      cursor: default;
+      position: fixed;
+      background-color: white;
+      top: 0;
+
+
+    }
+      .ql-toolbar {
+      z-index: 100;}
+
+      .quill {
+        height: 100vh;
         overflow: hidden;
-        width: 60px;
-        height: 60px;
-        position: absolute;
-        top: 20px;
-        right: 20px;
-        opacity: 10%;
-        cursor: pointer;
-        &:hover {
-            transform: scale(1.1);
-            opacity: 100%;
-        }
-        
+
+ }
+    .ql-editor {
+      padding-top: 42px;
+      // display: inline-block;
+      color: white;
+      background-color: #264941;
+      p {
+        font-size: 4rem;
+        cursor: url(${cursor}) 12 12, auto;
+      }
+      h1 {
+        font-size: 10rem;
+        cursor: url(${cursor}) 12 12, auto;
+      }
+      h2 {
+        font-size: 8rem;
+        cursor: url(${cursor}) 12 12, auto;
+      }
+      h3 {
+        font-size:6rem;
+        cursor: url(${cursor}) 12 12, auto;
+      }
+      ol {
+        font-size: 4rem;
+        padding-left: 0.5rem;
+        cursor: url(${cursor}) 12 12, auto;
+      }
+      ul {
+        font-size: 4rem;
+        padding-left: 0.5rem;
+        cursor: url(${cursor}) 12 12, auto;
+      }
     }
-`
+      div{
+        width: 100%;
+      }
+      &:hover {
 
 
+      }
+      // pointer-events: none;
+      cursor: url(${cursor}) 12 12, auto;
+    `
 
-const BoardTemplate = ({triggerFull, exitFull, element}) => {
-    const [isFullScreen,setIsFullScreen] = useState(false);
-    const [fontSize,setFontSize] = useState(40);
-    const onExpand = () => {
-        if(!isFullScreen){
-            triggerFull();
-            setIsFullScreen(true);
-        } else {
-            exitFull();
-            setIsFullScreen(false);
+
+    return (
+      <Container > 
+        <ReactQuill 
+              theme="snow"
+              modules={modules}
+              formats={formats}
+              />
+      </Container>
+    );
         }
-    }
-
-    return(
-        <BoardTemplateContainer>
-            <img 
-                src={isFullScreen ? exitIcon : expandIcon} 
-                className="expand" 
-                onClick={onExpand}
-                alt="전체화면"
-            ></img>
-            <div className="board" contentEditable style={{fontSize: fontSize + 'px'}} /> 
-            <div className='btnWrapper'>
-                <button>
-                    <FontAwesomeIcon icon={faPlus} onClick={()=>{setFontSize(prev => prev + 10)}}/>
-                </button>
-                <button>
-                    <FontAwesomeIcon icon={faMinus } onClick={()=>{setFontSize(prev => prev - 10)}}/>
-                </button>
-            </div>
-
-        </BoardTemplateContainer>
-    )
-}
-
-export default BoardTemplate;
